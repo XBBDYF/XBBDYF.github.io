@@ -185,7 +185,7 @@ function parseData(text) {
             const characterCode = [
                 `\t# ${name}`,
                 `\t${rawID} = {`,
-                `\t\tname = "${rawID}"`,
+                `\t\tname = ${rawID}`,
                 `\t\tportraits = {`,
                 `\t\t\tcivilian = {`,
                 `\t\t\t\tlarge = "GFX_${rawID}"`,
