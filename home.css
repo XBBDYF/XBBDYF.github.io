@@ -607,6 +607,17 @@ input[type="file"]:focus+.custom-file-upload {
     }
 }
 
+#output4 {
+    min-height: 120px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .output-group {
+        margin: 1.5rem 0;
+    }
+}
+
 /* 添加按钮基础过渡效果 */
 .btn {
     transition: all 0.3s ease, transform 0.3s ease;

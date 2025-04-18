@@ -131,7 +131,12 @@ function processFile() {
 
 // 数据解析核心逻辑
 function parseData(text) {
-    const result = { characters: [], sprites: [], recruits: [] };
+    const result = {
+        characters: [],
+        sprites: [],
+        recruits: [],
+        localizations: []
+    };
     let validEntryCount = 0;
     const seenIDs = new Set();
 
@@ -216,6 +221,10 @@ function parseData(text) {
             result.characters.push(characterCode);
             result.sprites.push(spriteCode);
             result.recruits.push(recruitCode);
+            result.localizations.push(
+                ` ${rawID}: "${name}"`,
+                ` ${rawID}_desc: ""`
+            );
 
             seenIDs.add(rawID);
             validEntryCount++;
@@ -240,13 +249,15 @@ function updateStoredData(newData) {
         storedData = {
             characters: [],
             sprites: [],
-            recruits: []
+            recruits: [],
+            localizations: []
         };
     }
 
     storedData.characters.push(...newData.characters);
     storedData.sprites.push(...newData.sprites);
     storedData.recruits.push(...newData.recruits);
+    storedData.localizations.push(...newData.localizations);
 }
 
 // 输出更新
@@ -254,6 +265,7 @@ function updateOutputs() {
     document.getElementById('output1').value = `characters = {\n${storedData.characters.join('\n')}\n}`;
     document.getElementById('output2').value = `spriteTypes = {\n${storedData.sprites.join('\n')}\n}`;
     document.getElementById('output3').value = storedData.recruits.join('\n');
+    document.getElementById('output4').value = `l_simp_chinese:\n${storedData.localizations.join('\n')}`;
 }
 
 // 图形化编辑器功能模块
