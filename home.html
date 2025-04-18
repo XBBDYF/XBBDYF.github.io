@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>钢铁雄心游戏角色代码生成器</title>
+    <script>
+        // 主题初始化脚本
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    <link rel="stylesheet" href="./home.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>角色代码生成器</h1>
+        <div class="theme-switch-container">
+            <div class="theme-switch">
+                <label class="switch">
+                    <input type="checkbox" id="themeToggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="theme-label">夜间模式</span>
+            </div>
+            <div class="theme-switch">
+                <label class="switch">
+                    <input type="checkbox" id="debugToggle" hidden>
+                    <span class="slider"></span>
+                </label>
+                <span class="theme-label">调试模式</span>
+            </div>
+        </div>
+        <div class="file-input">
+            <label class="file-btn">
+                <input type="file" id="txtFile" accept=".txt" hidden>
+                <span class="btn btn-secondary">选择文本文件</span>
+                <span id="fileName"></span>
+            </label>
+            <button class="btn" onclick="processFile()">生成代码</button>
+            <button class="btn btn-secondary" id="showEditorBtn">编辑文件内容</button>
+            <button class="btn btn-secondary" id="openModalBtn">图形化添加角色</button>
+            <label class="append-mode">
+                <input type="checkbox" id="appendMode">
+                <span class="checkmark"></span>
+                <span>追加模式</span>
+            </label>
+        </div>
+        <textarea id="fileContentEditor" class="hidden"></textarea>
+
+        <div id="addCharacterModal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>添加新角色</h2>
+                <div class="form-container">
+                    <div id="formContainer"></div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn" id="addRowBtn">添加新行</button>
+                    <button class="btn btn-secondary" id="saveChangesBtn">保存更改</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="output-group">
+            <div class="output-header">
+                <h3>角色定义代码:</h3>
+                <button class="btn copy-btn" data-target="output1">复制</button>
+            </div>
+            <textarea id="output1"></textarea>
+        </div>
+        
+        <div class="output-group">
+            <div class="output-header">
+                <h3>图片注册代码:</h3>
+                <button class="btn copy-btn" data-target="output2">复制</button>
+            </div>
+            <textarea id="output2"></textarea>
+        </div>
+        
+        <div class="output-group">
+            <div class="output-header">
+                <h3>角色招募代码:</h3>
+                <button class="btn copy-btn" data-target="output3">复制</button>
+            </div>
+            <textarea id="output3"></textarea>
+        </div>
+    </div>
+    <script src="./home.js"></script>
+</body>
+
+</html>
