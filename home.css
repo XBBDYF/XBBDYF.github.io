@@ -1,0 +1,912 @@
+/* ===== 基础重置 ===== */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* 调试模式开关 */
+#debugToggle:checked+.slider {
+    background: var(--danger-color);
+}
+
+.debug-status {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    padding: 12px;
+    background: var(--danger-bg);
+    border: 2px solid var(--danger-color);
+    border-radius: var(--radius-md);
+    color: var(--danger-color);
+    animation: debugPulse 1.5s infinite;
+    z-index: 10000;
+}
+
+.debug-container {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-direction: column-reverse;
+    /* 新消息在上方 */
+    gap: 10px;
+    z-index: 10000;
+    pointer-events: none;
+    max-height: calc(100vh - 100px);
+    /* 防止溢出屏幕 */
+    /* overflow-y: auto; */
+    /* 超出时滚动 */
+}
+
+.debug-status {
+    position: relative;
+    /* 改为相对定位 */
+    padding: 12px;
+    background: var(--danger-bg);
+    border: 2px solid var(--danger-color);
+    border-radius: var(--radius-md);
+    color: var(--danger-color);
+    animation:
+        slideUp 0.3s ease-out,
+        debugPulse 1.5s infinite;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-width: 250px;
+    opacity: 1;
+    transform: none !important;
+    /* 移除之前的位置变换 */
+    margin-top: 0;
+    /* 重置外边距 */
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.debug-status {
+    animation:
+        slideUp 0.3s ease-out,
+        debugPulse 1.5s infinite;
+}
+
+.debug-container {
+    pointer-events: none;
+    /* 防止点击干扰 */
+}
+
+.debug-status {
+    will-change: transform, opacity;
+    /* 优化动画性能 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* 增加层次感 */
+}
+
+@keyframes debugPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.no-animation * {
+    animation: none !important;
+    transition: none !important;
+}
+
+/* ===== 变量定义 ===== */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --danger-color: #e74c3c;
+    --text-color: #333;
+    --bg-color: #f0f2f5;
+    --container-bg: #fff;
+    --border-color: #e0e0e0;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+    --success-bg: #e8f6e3;
+    --error-bg: #fdecea;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --transition: all 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-color: #e0e0e0;
+        --bg-color: #1a1a1a;
+        --container-bg: #2d2d2d;
+        --border-color: #4a4a4a;
+        --shadow-color: rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* ===== 基础样式 ===== */
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 1.5em 0 1em;
+}
+
+h1 {
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+}
+
+/* ===== 布局容器 ===== */
+.container {
+    position: relative;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--container-bg);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 6px var(--shadow-color);
+    transition: var(--transition);
+}
+
+/* 移除容器悬停动画 */
+/* .container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px var(--shadow-color);
+} */
+
+/* ===== 标题样式 ===== */
+h1 {
+    position: relative;
+    text-align: center;
+    padding-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+h1::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+
+h3 {
+    position: relative;
+    padding-left: 1rem;
+    border-left: 4px solid var(--primary-color);
+    margin: 2rem 0 1rem;
+}
+
+/* ===== 表单元素 ===== */
+.input-group {
+    margin: 1.5rem 0;
+}
+
+textarea {
+    width: 100%;
+    height: 200px;
+    padding: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-color);
+    background: var(--container-bg);
+    font-family: 'Consolas', monospace;
+    resize: vertical;
+    transition: var(--transition);
+}
+
+textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    outline: none;
+}
+
+.file-input {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin: 2rem 0;
+}
+
+.custom-file-upload {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--bg-color);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.custom-file-upload:hover {
+    border-color: var(--primary-color);
+    background: var(--container-bg);
+}
+
+input[type="file"]:focus+.custom-file-upload {
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+}
+
+/* ===== 按钮系统 ===== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    filter: brightness(1.1);
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+}
+
+.btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: #95a5a6;
+}
+
+.btn-secondary {
+    background: var(--secondary-color);
+}
+
+.btn-danger {
+    background: var(--danger-color);
+}
+
+/* ===== 状态指示 ===== */
+/* 新增状态消息容器 */
+.status-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+/* 修改状态消息样式 */
+.status-message {
+    position: relative;
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px var(--shadow-color);
+    white-space: nowrap;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 添加进入动画 */
+.status-message.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 添加退出动画 */
+.status-message.hide {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.status-success {
+    background: var(--container-bg);
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.status-error {
+    background: var(--container-bg);
+    border: 2px solid var(--danger-color);
+    color: var(--danger-color);
+}
+
+.loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    display: none;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ===== 工具提示 ===== */
+[data-tooltip] {
+    position: relative;
+    cursor: help;
+}
+
+[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+[data-tooltip]:hover::after {
+    opacity: 1;
+}
+
+/* ===== 响应式设计 ===== */
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+
+    .container {
+        padding: 1.5rem;
+        margin: 1rem;
+        width: auto;
+    }
+
+    .file-input {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 2rem;
+    }
+
+    textarea {
+        height: 150px;
+    }
+}
+
+/* ===== 辅助类 ===== */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: #95a5a6;
+}
+
+.mt-1 {
+    margin-top: 0.5rem;
+}
+
+.mb-2 {
+    margin-bottom: 1rem;
+}
+
+.p-2 {
+    padding: 1rem;
+}
+
+/* ===== 打印优化 ===== */
+@media print {
+    .container {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+
+    button,
+    .file-input {
+        display: none;
+    }
+
+    textarea {
+        border: none;
+        background: transparent;
+        resize: none;
+    }
+}
+
+
+/* 文件选择按钮 */
+.file-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+#fileName {
+    color: var(--text-color);
+    opacity: 0.8;
+    font-size: 0.9em;
+}
+
+/* 自定义复选框 */
+.append-mode {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.append-mode input {
+    position: absolute;
+    opacity: 0;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    position: relative;
+    transition: var(--transition);
+}
+
+.append-mode input:checked~.checkmark {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.checkmark::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.append-mode input:checked~.checkmark::after {
+    opacity: 1;
+}
+
+
+/* 复制模块 */
+.output-group {
+    margin: 2rem 0;
+}
+
+.output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.copy-btn {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9em;
+    background: var(--secondary-color);
+    transition: var(--transition);
+}
+
+.copy-btn:hover {
+    background: #27ae60;
+}
+
+.copy-btn:active {
+    transform: translateY(1px);
+}
+
+/* 调整按钮动画关键帧 */
+@keyframes bounce {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.95);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* 添加按钮基础过渡效果 */
+.btn {
+    transition: all 0.3s ease, transform 0.3s ease;
+}
+
+
+/* 切换开关 */
+/* .theme-switch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--container-bg);
+    padding: 8px 12px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 2px 4px var(--shadow-color);
+} */
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #95a5a6;
+    transition: var(--transition);
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: var(--transition);
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: var(--primary-color);
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+}
+
+.theme-label {
+    font-size: 0.9em;
+    color: var(--text-color);
+    user-select: none;
+}
+
+/* 更新主题变量 */
+:root {
+    --text-color: #333;
+    --bg-color: #f0f2f5;
+    --container-bg: #fff;
+    --border-color: #e0e0e0;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] {
+    --text-color: #e0e0e0;
+    --bg-color: #1a1a1a;
+    --container-bg: #2d2d2d;
+    --border-color: #4a4a4a;
+    --shadow-color: rgba(255, 255, 255, 0.1);
+}
+
+
+/* 追加新角色界面 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal.show {
+    display: block;
+}
+
+.modal-content {
+    background-color: var(--container-bg);
+    margin: 15% auto;
+    padding: 20px;
+    max-width: 500px;
+    border-radius: var(--radius-md);
+    position: fixed;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    width: min(90%, 600px);
+}
+
+/* 滚动条美化 */
+*::-webkit-scrollbar {
+    width: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 4px;
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.form-group {
+    margin: 1rem 0;
+}
+
+.form-group input {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+#fileContentEditor {
+    width: 100%;
+    height: 200px;
+    margin: 1rem 0;
+}
+
+.form-container {
+    max-height: 60vh;
+    overflow-y: auto;
+    margin: 1rem 0;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.form-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    font-size: 0.9em;
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}
+
+
+/* 新增行动画 */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-row {
+    animation: slideIn 0.3s ease-out;
+    transition: all 0.3s ease;
+}
+
+/* 输入框美化 */
+.character-id,
+.character-name {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--container-bg);
+    color: var(--text-color);
+    font-size: 14px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px var(--shadow-color);
+}
+
+.character-id:focus,
+.character-name:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    outline: none;
+}
+
+/* 输入框占位符样式 */
+.character-id::placeholder,
+.character-name::placeholder {
+    color: #95a5a6;
+    font-style: italic;
+}
+
+/* 输入框悬停效果 */
+.character-id:hover,
+.character-name:hover {
+    border-color: var(--primary-color);
+}
+
+/* 新增行按钮动画 */
+#addRowBtn {
+    transition: transform 0.2s ease;
+}
+
+#addRowBtn:active {
+    transform: scale(0.95);
+}
+
+/* 错误状态提示 */
+.input-group.invalid input {
+    border-color: var(--danger-color);
+    animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+
+/* 控制台报错提醒 */
+.status-error {
+    background: var(--error-bg) !important;
+    border-color: var(--danger-color) !important;
+    color: var(--danger-color) !important;
+}
+
+.status-message pre {
+    margin: 8px 0 0;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-sm);
+    font-size: 0.85em;
+    white-space: pre-wrap;
+}
+
+.error-stack {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--danger-color);
+    font-size: 0.8em;
+    opacity: 0.8;
+}
