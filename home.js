@@ -237,7 +237,7 @@ function parseData(text) {
     if (validEntryCount === 0) {
         throw new Error("没有找到有效数据，请检查文件格式");
     }
-
+    
     return result;
 }
 
