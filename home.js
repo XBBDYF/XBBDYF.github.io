@@ -41,6 +41,7 @@ function updateDebugStatusDisplay() {
         const messages = [
             'DEBUG 模式已启用',
             '当前会话ID: ' + Date.now(),
+            '将会启用更多的动画效果',
             '请关闭 DEBUG 模式'
         ];
 
@@ -237,7 +238,7 @@ function parseData(text) {
     if (validEntryCount === 0) {
         throw new Error("没有找到有效数据，请检查文件格式");
     }
-    
+
     return result;
 }
 
