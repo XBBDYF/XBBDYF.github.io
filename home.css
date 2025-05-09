@@ -921,3 +921,64 @@ input:checked+.slider:before {
     font-size: 0.8em;
     opacity: 0.8;
 }
+
+
+/* ===== 贪吃蛇按钮 ===== */
+.snake-btn {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+    color: white;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+    text-decoration: none;
+    z-index: 9999;
+    transition: var(--transition);
+    transform-origin: left center;
+    animation: snakePulse 2s ease-in-out infinite;
+    border: 2px solid #27ae60;
+}
+
+.snake-btn:hover {
+    transform: scale(1.05) rotate(-2deg);
+    box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+    animation: none;
+}
+
+.snake-icon {
+    font-size: 1.4em;
+    transition: transform 0.3s ease;
+}
+
+.snake-text {
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes snakePulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+    }
+    50% {
+        transform: scale(1.03);
+        box-shadow: 0 6px 25px rgba(46, 204, 113, 0.4);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+    }
+}
+
+/* 暗色模式适配 */
+@media (prefers-color-scheme: dark) {
+    .snake-btn {
+        background: linear-gradient(135deg, #27ae60 0%, #219a52 100%);
+        border-color: #1e8449;
+    }
+}
