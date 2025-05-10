@@ -2456,22 +2456,33 @@
         });
 
         document.addEventListener('touchmove', e => {
-            e.preventDefault();
+            e.preventDefault(); // 阻止默认滚动行为
         }, { passive: false });
 
         document.addEventListener('touchend', e => {
+            if (!currentPiece) return;
+
             const deltaX = e.changedTouches[0].clientX - touchStartX;
             const deltaY = e.changedTouches[0].clientY - touchStartY;
 
-            if (Math.abs(deltaX) > touchThreshold || Math.abs(deltaY) > touchThreshold) {
-                if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                    if (deltaX > 0) handleMove('right');
-                    else handleMove('left');
-                } else {
-                    if (deltaY > 0) handleMove('down');
-                    else handleMove('rotate');
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX > touchThreshold) {
+                    currentPiece.x++;
+                    soundEffects.move();
+                } else if (deltaX < -touchThreshold) {
+                    currentPiece.x--;
+                    soundEffects.move();
+                }
+            } else {
+                if (deltaY > touchThreshold) {
+                    while (!currentPiece.collision(0, 1)) currentPiece.y++;
+                    soundEffects.drop();
+                } else if (deltaY < -touchThreshold) {
+                    currentPiece.rotate();
+                    soundEffects.rotate();
                 }
             }
+            drawBoard();
         });
 
         // 虚拟按钮事件绑定
@@ -2479,37 +2490,30 @@
             btn.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 const action = {
-                    '←': 'left',
-                    '→': 'right',
-                    '↻': 'rotate',
-                    '↓': 'down'
-                }[btn.textContent];
-                handleMove(action);
-            });
+                    'left-btn': () => currentPiece.x--,
+                    'right-btn': () => currentPiece.x++,
+                    'rotate-btn': () => currentPiece.rotate(),
+                    'down-btn': () => currentPiece.y++
+                }[btn.classList[1]];
+
+                if (action && !currentPiece.collision(0, 0, action)) {
+                    action();
+                    drawBoard();
+                }
+            }, { passive: true });
         });
 
-        function handleMove(action) {
-            if (!currentPiece || isPaused) return;
+        // 调整游戏初始化尺寸
+        function initCanvasSize() {
+            const isMobile = /Android|webOS|iPhone|iPad/i.test(navigator.userAgent);
+            if (isMobile) {
+                const boardWidth = Math.min(window.innerWidth * 0.9, 300);
+                const cellSize = boardWidth / COLS;
 
-            switch (action) {
-                case 'left':
-                    if (!currentPiece.collision(-1, 0)) currentPiece.x--;
-                    soundEffects.move();
-                    break;
-                case 'right':
-                    if (!currentPiece.collision(1, 0)) currentPiece.x++;
-                    soundEffects.move();
-                    break;
-                case 'down':
-                    if (!currentPiece.collision(0, 1)) currentPiece.y++;
-                    soundEffects.drop();
-                    break;
-                case 'rotate':
-                    currentPiece.rotate();
-                    soundEffects.rotate();
-                    break;
+                const gameBoard = document.getElementById('gameBoard');
+                gameBoard.width = boardWidth;
+                gameBoard.height = cellSize * ROWS;
             }
-            drawBoard();
         }
 
         // 在window resize时调整画布
