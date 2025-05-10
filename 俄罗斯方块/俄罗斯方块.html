@@ -1,0 +1,2531 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>HTML5俄罗斯方块</title>
+    <style>
+        body {
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            color: white;
+        }
+
+        .game-container {
+            position: relative;
+            display: flex;
+            gap: 30px;
+            background: #2d2d44;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.2);
+        }
+
+        .game-container {
+            /* 原有样式 */
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: auto;
+            flex-wrap: wrap;
+            /* 添加换行显示 */
+        }
+
+        /* 调整控制面板位置 */
+        .control-panel {
+            position: sticky;
+            top: 20px;
+            left: 20px;
+        }
+
+        #gameBoard {
+            font-family: "Segoe UI Emoji", "Apple Color Emoji", sans-serif;
+            border: 3px solid var(--border-primary);
+            background: var(--game-bg);
+            border-radius: 8px;
+            position: relative;
+        }
+
+
+        .block-cell {
+            position: relative;
+        }
+
+        .block-cell::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .next-block canvas {
+            background: #1a1a2e;
+            border: 2px solid #4a4a6a;
+        }
+
+        .buttons button {
+            background: #4CAF50;
+            border: none;
+            padding: 10px 20px;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        /* 按钮悬停效果 */
+        .buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .buttons button:active {
+            transform: translateY(1px);
+        }
+
+        /* 分数样式优化 */
+        .score-box {
+            background: var(--bg-secondary);
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .score-box h2 {
+            margin: 0;
+            font-size: 1.4em;
+        }
+
+        /* 下一个方块预览样式 */
+        .next-block canvas {
+            border-radius: 6px;
+        }
+
+
+        /* 指南样式 */
+        .controls-guide {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--panel-bg);
+            padding: 15px 25px;
+            border-radius: 12px;
+            display: flex;
+            gap: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-primary);
+        }
+
+        .control-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+
+        .key {
+            background: var(--bg-secondary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-primary);
+            font-family: monospace;
+        }
+
+        /* 黑夜白天模式切换 */
+        :root {
+            --bg-primary: #f0f2f5;
+            --bg-secondary: #ffffff;
+            --text-primary: #333333;
+            --border-primary: #e0e0e0;
+            --accent-color: #3498db;
+            --game-bg: #0f0f1a;
+            --panel-bg: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #2d2d44;
+            --text-primary: #e0e0e0;
+            --border-primary: #4a4a6a;
+            --accent-color: #4ECDC4;
+            --game-bg: #0a0a12;
+            --panel-bg: #2d2d44;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background 0.3s ease;
+        }
+
+        .game-container {
+            background: var(--panel-bg);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        #gameBoard {
+            border: 3px solid var(--border-primary);
+            background: var(--game-bg);
+        }
+
+        .control-panel {
+            background: var(--panel-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-primary);
+        }
+
+        .buttons button {
+            background: var(--accent-color);
+            color: white;
+            border-radius: 4px;
+        }
+
+        /* 主题切换按钮样式 */
+        .theme-switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--panel-bg);
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #95a5a6;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(20px);
+        }
+
+        .style-menu {
+            position: fixed;
+            /* 改为固定定位 */
+            left: 20px;
+            /* 调整到视口左侧 */
+            top: 80px;
+            /* 下移避免与主题切换按钮重叠 */
+            z-index: 1000;
+            /* 确保在最上层 */
+            background: var(--panel-bg);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-primary);
+        }
+
+        .style-menu select {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-primary);
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* 爆炸动画相关样式 */
+        .game-over-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            animation: blast 1.5s ease-out forwards;
+            pointer-events: none;
+            opacity: 0;
+        }
+
+        @keyframes blast {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(2);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* 方块主题 */
+        /* 方块颜色变量定义 */
+        :root {
+            --color-0: #FF6B6B;
+            --color-1: #4ECDC4;
+            --color-2: #45B7D1;
+            --color-3: #96CEB4;
+            --color-4: #FFEEAD;
+            --color-5: #D4A5A5;
+            --color-6: #99B898;
+            --color-bomb: #FF0000;
+
+            /* 糖果主题颜色 */
+            --candy-0: #FF9AA2;
+            --candy-1: #B5EAD7;
+            --candy-2: #C7CEEA;
+            --candy-3: #FFB7B2;
+            --candy-4: #FFFFD8;
+            --candy-5: #E2F0CB;
+            --candy-6: #B5EAD7;
+            --candy-bomb: #FF6961;
+
+            /* 复古主题颜色 */
+            --retro-0: #0F380F;
+            --retro-1: #306230;
+            --retro-2: #8BAC0F;
+            --retro-3: #9BBC0F;
+            --retro-4: #0F380F;
+            --retro-5: #306230;
+            --retro-6: #8BAC0F;
+            --retro-bomb: #FF0018;
+
+            /* 金属主题颜色 */
+            --metal-0: #7F7F7F;
+            --metal-1: #A9A9A9;
+            --metal-2: #808080;
+            --metal-3: #696969;
+            --metal-4: #778899;
+            --metal-5: #708090;
+            --metal-6: #2F4F4F;
+            --metal-bomb: #B22222;
+
+            /* 玻璃主题颜色 */
+            --glass-0: rgba(145, 216, 228, 0.5);
+            /* 半透明浅蓝 */
+            --glass-1: rgba(158, 234, 125, 0.5);
+            --glass-2: rgba(255, 211, 105, 0.5);
+            --glass-3: rgba(255, 152, 152, 0.5);
+            --glass-4: rgba(197, 181, 253, 0.5);
+            --glass-5: rgba(130, 202, 255, 0.5);
+            --glass-6: rgba(255, 203, 107, 0.5);
+            --glass-bomb: rgba(255, 75, 75, 0.7);
+            /* 半透明红色 */
+            --glass-border: rgba(50, 70, 80, 0.8);
+            /* 玻璃边框色 */
+
+            --neon-0: #FF0077;
+            --neon-1: #00FF88;
+            --neon-2: #FFDD00;
+            --neon-3: #FF6600;
+            --neon-4: #00FFFF;
+            --neon-5: #CC00FF;
+            --neon-6: #FF0099;
+            --neon-bomb: #FFFFFF;
+
+            --forest-0: #2D5A27;
+            --forest-1: #568E3D;
+            --forest-2: #8CB369;
+            --forest-3: #B0C47B;
+            --forest-4: #D4E6B5;
+            --forest-5: #6B8F71;
+            --forest-6: #A4C3B2;
+            --forest-bomb: #FF6B35;
+
+            --ocean-0: #005F73;
+            --ocean-1: #0A9396;
+            --ocean-2: #94D2BD;
+            --ocean-3: #E9D8A6;
+            --ocean-4: #9B5DE5;
+            --ocean-5: #00F5D4;
+            --ocean-6: #7AE582;
+            --ocean-bomb: #FF006E;
+        }
+
+        [data-theme="dark"] {
+            --color-0: #FF4757;
+            --color-1: #2ED573;
+            --color-2: #1E90FF;
+            --color-3: #FFA502;
+            --color-4: #FFD700;
+            --color-5: #7BED9F;
+            --color-6: #70A1FF;
+            --color-bomb: #FF5555;
+
+            /* 暗色系糖果主题 */
+            --candy-0: #FF6B6B;
+            --candy-1: #4ECDC4;
+            --candy-2: #45B7D1;
+            --candy-3: #96CEB4;
+            --candy-4: #FFEEAD;
+            --candy-5: #D4A5A5;
+            --candy-6: #99B898;
+            --candy-bomb: #FF5555;
+
+            /* 复古主题保持原色 */
+            --retro-0: #0F380F;
+            --retro-1: #306230;
+            --retro-2: #8BAC0F;
+            --retro-3: #9BBC0F;
+            --retro-4: #0F380F;
+            --retro-5: #306230;
+            --retro-6: #8BAC0F;
+            --retro-bomb: #FF0018;
+
+            /* 暗色金属主题 */
+            --metal-0: #5A5A5A;
+            --metal-1: #808080;
+            --metal-2: #696969;
+            --metal-3: #4F4F4F;
+            --metal-4: #4A5568;
+            --metal-5: #3B4F6B;
+            --metal-6: #1E2B37;
+            --metal-bomb: #8B0000;
+
+            /* 暗色玻璃主题 */
+            --glass-0: rgba(76, 175, 193, 0.8);
+            --glass-1: rgba(88, 164, 76, 0.8);
+            --glass-2: rgba(193, 141, 45, 0.8);
+            --glass-3: rgba(193, 92, 92, 0.8);
+            --glass-4: rgba(137, 121, 193, 0.8);
+            --glass-5: rgba(80, 142, 193, 0.8);
+            --glass-6: rgba(193, 143, 45, 0.8);
+            --glass-bomb: rgba(193, 45, 45, 0.9);
+
+
+            --neon-0: #FF0066;
+            --neon-1: #00FF77;
+            --neon-2: #FFD700;
+            --neon-3: #FF5500;
+            --neon-4: #00EEEE;
+            --neon-5: #CC00EE;
+            --neon-6: #FF0088;
+            --neon-bomb: #FFEE00;
+
+            --forest-0: #1E3F20;
+            --forest-1: #3C6E40;
+            --forest-2: #7CA982;
+            --forest-3: #A8C686;
+            --forest-4: #C8E0B8;
+            --forest-5: #4A7856;
+            --forest-6: #8FBC8F;
+            --forest-bomb: #FF4500;
+
+            --ocean-0: #003E4C;
+            --ocean-1: #007F8C;
+            --ocean-2: #7FB3B0;
+            --ocean-3: #D4E09B;
+            --ocean-4: #8A4FFF;
+            --ocean-5: #00D4B8;
+            --ocean-6: #6CDE8A;
+            --ocean-bomb: #FF1493;
+        }
+
+        .glass-debris {
+            filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.5));
+        }
+
+        /* 手机端响应式样式 */
+        /* 按钮美化 */
+        .buttons button {
+            background: linear-gradient(145deg, var(--accent-color), #3a8dff);
+            border: none;
+            padding: 14px 28px;
+            color: white;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .buttons button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 手机虚拟控制面板优化 */
+        .mobile-controls {
+            display: none;
+            /* 默认隐藏 */
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            gap: 25px;
+            touch-action: manipulation;
+            z-index: 1000;
+        }
+
+        @media screen and (max-width: 600px) {
+            .mobile-controls {
+                display: flex;
+                padding: 10px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(8px);
+                border-radius: 24px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            }
+
+            .mobile-btn {
+                width: 60px;
+                height: 60px;
+                border-radius: 16px;
+                background: linear-gradient(145deg, var(--accent-color), #3a8dff);
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                font-size: 28px;
+                transition: all 0.1s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+            }
+
+            .mobile-btn:active {
+                transform: scale(0.92);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            /* 操作指南优化 */
+            .controls-guide {
+                display: none;
+                /* 手机端隐藏文字指南 */
+            }
+
+            /* 调整游戏容器布局 */
+            .game-container {
+                margin-top: 80px;
+                /* 为虚拟按钮留出空间 */
+            }
+
+            /* 主题适配 */
+            [data-theme="dark"] .buttons button {
+                background: linear-gradient(145deg, #4a8dff, #2a6dff);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            }
+
+            [data-theme="dark"] .mobile-btn {
+                background: linear-gradient(145deg, #3a3a6e, #2a2a5e);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="theme-switch-container" style="position: absolute; top: 20px; right: 20px; z-index: 1000;">
+        <div class="theme-switch">
+            <button onclick="toggleMute()" style="margin-right:10px">🔊</button>
+            <label class="switch">
+                <input type="checkbox" id="themeToggle">
+                <span class="slider"></span>
+            </label>
+            <span class="theme-label">夜间模式</span>
+        </div>
+    </div>
+    <div class="game-container">
+        <div class="style-menu">
+            <select id="boardSize" onchange="changeBoardSize()">
+                <option value="10x20">标准 (10x20)</option>
+                <option value="15x30">大型 (15x30)</option>
+                <option value="20x40">超大 (20x40)</option>
+            </select>
+            <select id="blockStyle" onchange="updateBlockStyle()">
+                <option value="default">默认方块</option>
+                <option value="neon">霓虹边框</option>
+                <option value="gradient">渐变填充</option>
+                <option value="pixel">像素风格</option>
+                <option value="candy">糖果风格</option>
+                <option value="retro">复古风格</option>
+                <option value="metal">金属风格</option>
+                <option value="glass">玻璃风格</option>
+                <option value="neon">霓虹风格</option>
+                <option value="forest">森林风格</option>
+                <option value="ocean">海洋风格</option>
+            </select>
+        </div>
+        <canvas id="gameBoard" width="300" height="600"></canvas>
+        <div class="control-panel">
+            <div class="score-box">
+                <h2>分数 <span id="score">0</span></h2>
+            </div>
+            <div class="next-block">
+                <h3>下一个方块</h3>
+                <canvas id="nextBlock" width="80" height="80"></canvas>
+            </div>
+            <div class="buttons">
+                <button onclick="startGame()">开始游戏</button>
+                <button onclick="pauseGame()">暂停(P)</button>
+            </div>
+        </div>
+    </div>
+    <div class="controls-guide">
+        <div class="control-item">
+            <span class="key">←</span> 左移
+        </div>
+        <div class="control-item">
+            <span class="key">→</span> 右移
+        </div>
+        <div class="control-item">
+            <span class="key">↑</span> 旋转
+        </div>
+        <div class="control-item">
+            <span class="key">↓</span> 加速
+        </div>
+        <div class="control-item">
+            <span class="key">空格</span> 瞬降
+        </div>
+        <div class="control-item">
+            <span class="key">P</span> 暂停
+        </div>
+    </div>
+    <audio id="bgMusic" loop src="https://www.tetris.com/sounds/tetris_bg_music.mp3"></audio>
+
+    <div class="mobile-controls">
+        <div class="mobile-btn left-btn">←</div>
+        <div class="mobile-btn rotate-btn">↻</div>
+        <div class="mobile-btn right-btn">→</div>
+        <div class="mobile-btn down-btn">↓</div>
+    </div>
+    <script>
+        // 游戏初始化游戏初始化
+        // const CELL_SIZE = 30;
+        // const COLS = 10, ROWS = 20;
+        let COLS = 10;
+        let ROWS = 20;
+        const CELL_SIZE = 30;
+        let score = 0;
+        let isPaused = false; //暂停状态标识
+        let particles = []; // 粒子数组
+        // 游戏循环和渲染逻辑
+        let lastTime = 0;
+        const frameRate = 60; // 独立渲染帧率
+        // 游戏结束相关变量
+        let isGameOver = true;
+        let explosionAnimations = [];
+        let shakeIntensity = 0;
+        let whiteAlpha = 0;
+        // 方块样式控制
+        let currentStyle = 'default';
+        // 在游戏初始化时添加裂缝数组
+        let cracks = Array(ROWS).fill().map(() => Array(COLS).fill(false));
+        // 爆炸颜色
+        let bombColor;
+        // let bombBoard = Array(ROWS).fill().map(() => Array(COLS).fill(false));
+        // 在全局变量区域添加音频相关变量
+        let audioContext;
+        let gainNode;
+        let isMuted = false;
+        const bgMusic = document.getElementById('bgMusic');
+        // let activeCracks = [];
+        // let needGenerateCracks = false;
+        const GRID_SIZE = 30; // 新增网格尺寸定义
+        let glassDebris = []; // 新增空间分区网格数组
+
+        // 触控事件处理
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const touchThreshold = 30;
+
+        // 格子面积
+        function changeBoardSize() {
+            const size = document.getElementById('boardSize').value.split('x');
+            COLS = parseInt(size[0]);
+            ROWS = parseInt(size[1]);
+
+            const gameBoard = document.getElementById('gameBoard');
+            gameBoard.width = COLS * CELL_SIZE;
+            gameBoard.height = ROWS * CELL_SIZE;
+
+            // 重置游戏
+            if (gameInterval) {
+                clearInterval(gameInterval);
+                gameInterval = null;
+            }
+            isGameOver = true;
+            startGame();
+        }
+
+        // 初始化音频上下文
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                gainNode = audioContext.createGain();
+                gainNode.connect(audioContext.destination);
+            }
+        }
+
+        // 音效生成函数
+        function playTone(frequency, duration, type = 'sine') {
+            if (isMuted) return;
+
+            initAudio();
+            const oscillator = audioContext.createOscillator();
+            const envelope = audioContext.createGain();
+
+            oscillator.type = type;
+            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+
+            envelope.gain.setValueAtTime(0.2, audioContext.currentTime);
+            envelope.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + duration);
+
+            oscillator.connect(envelope);
+            envelope.connect(gainNode);
+
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+
+        // 游戏音效
+        const soundEffects = {
+            move: () => playTone(523, 0.05),
+            rotate: () => playTone(659, 0.08),
+            drop: () => playTone(784, 0.1),
+            clearLine: () => {
+                playTone(440, 0.2);
+                playTone(554, 0.2);
+            },
+            bomb: () => {
+                const now = audioContext.currentTime;
+                const noise = audioContext.createBufferSource();
+                const buffer = audioContext.createBuffer(1, audioContext.sampleRate * 0.5, audioContext.sampleRate);
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < buffer.length; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+
+                noise.buffer = buffer;
+                const filter = audioContext.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.setValueAtTime(1000, now);
+
+                const gain = audioContext.createGain();
+                gain.gain.setValueAtTime(0.5, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(gainNode);
+                noise.start();
+                noise.stop(now + 0.5);
+            },
+            gameOver: () => {
+                playTone(220, 1.5, 'square');
+                playTone(110, 1.5, 'sawtooth');
+            },
+            glassBreak: () => {
+                playTone(1200, 0.3, 'sawtooth');
+                playTone(800, 0.3, 'square');
+            }
+        };
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            gainNode.gain.setValueAtTime(isMuted ? 0 : 1, audioContext.currentTime);
+            bgMusic.muted = isMuted;
+        }
+
+        function updateBlockStyle() {
+            currentStyle = document.getElementById('blockStyle').value;
+            drawBoard();
+            drawNext();
+        }
+
+
+        // 颜色函数
+        function shadeColor(color, percent) {
+            let R = parseInt(color.substring(1, 3), 16);
+            let G = parseInt(color.substring(3, 5), 16);
+            let B = parseInt(color.substring(5, 7), 16);
+
+            R = parseInt(R * (100 + percent) / 100);
+            G = parseInt(G * (100 + percent) / 100);
+            B = parseInt(B * (100 + percent) / 100);
+
+            R = (R < 255) ? R : 255;
+            G = (G < 255) ? G : 255;
+            B = (B < 255) ? B : 255;
+
+            const RR = R.toString(16).length == 1 ? "0" + R.toString(16) : R.toString(16);
+            const GG = G.toString(16).length == 1 ? "0" + G.toString(16) : G.toString(16);
+            const BB = B.toString(16).length == 1 ? "0" + B.toString(16) : B.toString(16);
+
+            return "#" + RR + GG + BB;
+        }
+
+        // 游戏板二维数组
+        let board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+
+        // 方块形状定义 [6](@ref)
+        const SHAPES = [
+            [[1, 1, 1, 1]],                         // I型
+            [[1, 1, 1], [0, 1, 0]],                 // T型
+            [[1, 1, 1], [1, 0, 0]],                 // L型
+            [[1, 1, 1], [0, 0, 1]],                 // J型
+            [[1, 1], [1, 1]],                     // O型
+            [[1, 1, 0], [0, 1, 1]],                 // S型
+            [[0, 1, 1], [1, 1, 0]]                  // Z型
+        ];
+
+        // 颜色获取方式
+        let COLORS = [];
+        // const COLORS = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEEAD", "#D4A5A5", "#99B898"];
+
+        function updateColors() {
+            const root = document.documentElement;
+            const styleMap = {
+                default: 'color',
+                neon: 'neon',
+                forest: 'forest',
+                ocean: 'ocean',
+                candy: 'candy',
+                retro: 'retro',
+                metal: 'metal',
+                glass: 'glass'
+            };
+
+            const prefix = styleMap[currentStyle] || 'color';
+            COLORS = Array.from({ length: 7 }, (_, i) =>
+                getComputedStyle(root).getPropertyValue(`--${prefix}-${i}`).trim()
+            );
+            bombColor = getComputedStyle(root).getPropertyValue(`--${prefix}-bomb`).trim();
+        }
+
+        // 方块类实现
+        class Tetromino {
+
+            // constructor() {
+            //     this.shapeIndex = Math.floor(Math.random() * 7);  // 保存初始形状索引
+            //     this.shape = SHAPES[this.shapeIndex];
+            //     this.color = COLORS[this.shapeIndex];
+            //     this.x = Math.floor(COLS / 2) - Math.floor(this.shape[0].length / 2);
+            //     this.y = 0;
+            // }
+            // 在 Tetromino 类的构造函数中修改以下代码
+            constructor() {
+                this.impactPoints = []; // 初始化碰撞点数组
+                this.shapeIndex = Math.floor(Math.random() * 7);
+                this.shape = SHAPES[this.shapeIndex].map(row =>
+                    row.map(cell => cell ? this.shapeIndex + 1 : 0)
+                );
+                this.color = COLORS[this.shapeIndex];
+                this.bombCells = [];
+
+                if (Math.random() < 0.3) {
+                    const cells = [];
+                    this.shape.forEach((row, dy) => {
+                        row.forEach((cellVal, dx) => {
+                            if (cellVal !== 0) cells.push({ dy, dx });
+                        });
+                    });
+
+                    if (cells.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * cells.length);
+                        const { dy, dx } = cells[randomIndex];
+                        this.shape[dy][dx] = 8; // 将炸弹单元格设为8
+                        this.bombCells.push({ dy, dx });
+                    }
+                }
+
+                this.x = Math.floor(COLS / 2) - Math.floor(this.shape[0].length / 2);
+                this.y = 0;
+            }
+
+            addImpactPoint(x, y) {
+                this.impactPoints.push({ x, y });
+            }
+
+            // 旋转逻辑 [2](@ref)
+            rotate() {
+                const newShape = this.shape[0].map((_, i) =>
+                    this.shape.map(row => row[i]).reverse()
+                );
+                if (!this.collision(0, 0, newShape)) {
+                    this.shape = newShape;
+                }
+            }
+
+            // 碰撞检测 [4](@ref)
+            collision(offsetX, offsetY, testShape = this.shape) {
+                return testShape.some((row, dy) =>
+                    row.some((cell, dx) =>
+                        cell && (
+                            this.x + dx + offsetX < 0 ||
+                            this.x + dx + offsetX >= COLS ||
+                            this.y + dy + offsetY >= ROWS ||
+                            board[this.y + dy + offsetY][this.x + dx + offsetX]
+                        )
+                    )
+                );
+            }
+        }
+
+        let nextPiece = null; // 新增下一方块存储
+        // 修改后的游戏流程控制
+        function lockPiece() {
+            currentPiece.shape.forEach((row, dy) => {
+                row.forEach((cellVal, dx) => {
+                    if (cellVal) {
+                        const y = currentPiece.y + dy;
+                        const x = currentPiece.x + dx;
+                        // 确保坐标有效
+                        if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
+                            board[y][x] = cellVal;
+                        }
+                    }
+                });
+            });
+            // 记录底部接触点
+            currentPiece.shape.forEach((row, dy) => {
+                row.forEach((cell, dx) => {
+                    if (cell) {
+                        const gridY = currentPiece.y + dy + 1;
+                        if (gridY >= ROWS || board[gridY][currentPiece.x + dx]) {
+                            currentPiece.addImpactPoint(
+                                currentPiece.x + dx,
+                                currentPiece.y + dy
+                            );
+                        }
+                    }
+                });
+            });
+            if (currentStyle === 'glass') {
+                currentPiece.shape.forEach((row, dy) => {
+                    row.forEach((cell, dx) => {
+                        if (cell) {
+                            // 生成接触碎片
+                            const debris = new Particle(
+                                (currentPiece.x + dx) * CELL_SIZE + CELL_SIZE / 2,
+                                (currentPiece.y + dy) * CELL_SIZE + CELL_SIZE / 2,
+                                currentPiece.color
+                            );
+                            debris.vy = -Math.random() * 3;
+                            debris.vx = (Math.random() - 0.5) * 2;
+                            particles.push(debris);
+                        }
+                    });
+                });
+            }
+        }
+
+        // 裂纹生成逻辑
+        function generateCracksFromImpact() {
+            currentPiece.impactPoints.forEach(point => {
+                for (let dy = -1; dy <= 1; dy++) {
+                    for (dx = -1; dx <= 1; dx++) {
+                        const y = point.y + dy;
+                        const x = point.x + dx;
+                        if (y >= 0 && y < ROWS && x >= 0 && x < COLS) {
+                            cracks[y][x] = true;
+                        }
+                    }
+                }
+            });
+
+            // 添加玻璃破碎音效
+            // if (currentStyle === 'glass') {
+            //     playTone(1500, 0.2, 'sawtooth');
+            //     playTone(900, 0.3, 'square');
+            // }
+        }
+
+        // 新增下一个方块绘制
+        function drawNext() {
+            const ctx = document.getElementById('nextBlock').getContext('2d');
+            ctx.clearRect(0, 0, 80, 80);
+            if (!nextPiece) return; // 添加空值检查
+            ctx.fillStyle = nextPiece.color;
+            const offsetX = (4 - nextPiece.shape[0].length) * 10;
+            nextPiece.shape.forEach((row, dy) => {
+                row.forEach((cell, dx) => {
+                    if (cell) ctx.fillRect(
+                        dx * 20 + offsetX,
+                        dy * 20 + 10,
+                        18, 18
+                    );
+                });
+            });
+        }
+
+
+        // 游戏循环与渲染
+        let currentPiece = null;
+        let gameInterval = null;
+
+        // 添加粒子数量限制（防止性能下降）
+        const MAX_PARTICLES = 3000;
+
+        function drawBoard() {
+            updateColors();
+            const ctx = document.getElementById('gameBoard').getContext('2d');
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.save();
+
+            // 屏幕抖动效果
+            if (shakeIntensity > 0) {
+                ctx.translate(
+                    (Math.random() - 0.5) * shakeIntensity,
+                    (Math.random() - 0.5) * shakeIntensity
+                );
+            }
+
+            // 绘制粒子效果
+            // particles = particles.filter(p => {
+            //     p.update();
+            //     return p.life > 0;
+            // }).slice(-MAX_PARTICLES);
+            particles.forEach(p => p.draw(ctx));
+
+            // 绘制固定方块（应用当前样式）
+            board.forEach((row, y) => row.forEach((cell, x) => {
+                if (cell) {
+                    const isBomb = cell === 8; // 直接通过单元格值判断
+                    const color = isBomb ? bombColor : COLORS[cell - 1];
+                    applyBlockStyle(ctx, color, x * CELL_SIZE, y * CELL_SIZE, isBomb);
+                }
+            }));
+
+            // 绘制当前方块投影
+            if (currentPiece) {
+                let dropDistance = 0;
+                while (!currentPiece.collision(0, dropDistance + 1)) {
+                    dropDistance++;
+                }
+                const shadowY = currentPiece.y + dropDistance;
+
+                currentPiece.shape.forEach((row, dy) => {
+                    row.forEach((cell, dx) => {
+                        if (cell) {
+                            const xPos = (currentPiece.x + dx) * CELL_SIZE;
+                            const yPos = (shadowY + dy) * CELL_SIZE;
+                            const isBomb = cell === 8;
+                            let shadowColor = isBomb ? bombColor : currentPiece.color;
+
+                            // 根据主题调整投影样式
+                            switch (currentStyle) {
+                                case 'neon':
+                                    shadowColor = hexToRGBA(shadowColor, 0.2);
+                                    break;
+                                case 'gradient':
+                                    shadowColor = shadeColor(shadowColor, -30);
+                                    break;
+                                case 'glass':
+                                    shadowColor = hexToRGBA(shadowColor, 0.15);
+                                    break;
+                                case 'retro':
+                                    shadowColor = '#000000';
+                                    break;
+                                case 'metal':
+                                    shadowColor = shadeColor(shadowColor, -40);
+                                    break;
+                                default:
+                                    shadowColor = hexToRGBA(shadowColor, 0.3);
+                            }
+
+                            // 保存当前状态后应用投影样式
+                            ctx.save();
+                            applyBlockStyle(ctx, shadowColor, xPos, yPos, isBomb, true);
+                            ctx.restore();
+                        }
+                    });
+                });
+            }
+
+            // 绘制当前下落方块（应用当前样式）
+            if (currentPiece) {
+                currentPiece.shape.forEach((row, dy) => {
+                    row.forEach((cell, dx) => {
+                        if (cell) {
+                            const xPos = (currentPiece.x + dx) * CELL_SIZE;
+                            const yPos = (currentPiece.y + dy) * CELL_SIZE;
+                            // 直接通过单元格值判断是否为炸弹
+                            const isBomb = cell === 8;
+                            const color = isBomb ? bombColor : currentPiece.color;
+                            applyBlockStyle(ctx, color, xPos, yPos, isBomb, true);
+                        }
+                    });
+                });
+            }
+
+            // 绘制爆炸动画
+            // explosionAnimations = explosionAnimations.filter(anim => {
+            //     anim.scale += 0.15;
+            //     anim.alpha -= 0.03;
+            //     ctx.save();
+            //     ctx.globalAlpha = anim.alpha;
+            //     ctx.fillStyle = anim.color;
+            //     ctx.beginPath();
+            //     ctx.arc(anim.x, anim.y, anim.scale * 3, 0, Math.PI * 2);
+            //     ctx.fill();
+            //     ctx.restore();
+            //     return anim.alpha > 0;
+            // });
+
+            explosionAnimations.forEach(anim => {
+                ctx.save();
+                ctx.globalAlpha = anim.alpha;
+                ctx.fillStyle = anim.color;
+                ctx.beginPath();
+                ctx.arc(anim.x, anim.y, anim.scale * 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // 绘制动态裂纹
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.lineWidth = 1.2;
+            ctx.lineCap = 'round'; // 添加圆角端点
+
+            if (currentStyle === 'glass') {
+                // 绘制静态裂纹
+                // cracks.forEach((row, y) => {
+                //     row.forEach((hasCrack, x) => {
+                //         if (hasCrack) {
+                //             ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                //             ctx.lineWidth = 1.2;
+
+                //             // 绘制主裂纹
+                //             ctx.beginPath();
+                //             ctx.moveTo(x * CELL_SIZE + 5, y * CELL_SIZE + 5);
+                //             ctx.lineTo(x * CELL_SIZE + CELL_SIZE - 5, y * CELL_SIZE + CELL_SIZE - 5);
+                //             ctx.stroke();
+
+                //             // 绘制辅助裂纹
+                //             ctx.beginPath();
+                //             ctx.moveTo(x * CELL_SIZE + CELL_SIZE - 5, y * CELL_SIZE + 5);
+                //             ctx.lineTo(x * CELL_SIZE + 5, y * CELL_SIZE + CELL_SIZE - 5);
+                //             ctx.stroke();
+                //         }
+                //     });
+                // });
+            }
+
+            // 白光覆盖效果
+            if (whiteAlpha > 0) {
+                ctx.fillStyle = `rgba(255, 255, 255, ${whiteAlpha})`;
+                ctx.fillRect(0, 0, 300, 600);
+            }
+
+            ctx.restore();
+        }
+
+        // 样式应用函数
+        function applyBlockStyle(ctx, color, x, y, isBomb, isShadow) {
+            const size = CELL_SIZE - 1;
+
+            // 投影特殊处理
+            if (isShadow) {
+                switch (currentStyle) {
+                    case 'neon':
+                        ctx.globalAlpha = 0.4;
+                        ctx.shadowColor = color;
+                        ctx.shadowBlur = 15;
+                        break;
+                    case 'glass':
+                        ctx.globalAlpha = 0.3;
+                        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                        break;
+                    case 'retro':
+                        ctx.globalAlpha = 0.6;
+                        color = '#000000';
+                        break;
+                    default:
+                        ctx.globalAlpha = 0.3;
+                }
+            }
+
+            switch (currentStyle) {
+                case 'neon':
+                    // 霓虹边框效果
+                    if (isShadow) {
+                        ctx.shadowBlur = 10;
+                        ctx.fillStyle = hexToRGBA(color, 0.2);
+                    }
+                    ctx.fillStyle = color;
+                    ctx.fillRect(x, y, size, size);
+
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x + 1, y + 1, size - 2, size - 2);
+
+                    // 发光效果
+                    ctx.shadowColor = color;
+                    ctx.shadowBlur = 8;
+                    ctx.strokeRect(x + 1, y + 1, size - 2, size - 2);
+                    ctx.shadowBlur = 0;
+                    break;
+
+                case 'gradient': {
+                    // 修正渐变方向并添加颜色停止点
+                    const gradient = ctx.createLinearGradient(x, y, x + size, y + size);
+                    gradient.addColorStop(0, color);
+                    gradient.addColorStop(1, shadeColor(color, -30));
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(x, y, size, size);
+                    // 添加立体边框
+                    ctx.strokeStyle = shadeColor(color, -20);
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x, y, size, size);
+                    break;
+                }
+                case 'pixel':
+                    // 修正像素风格的绘制逻辑
+                    ctx.fillStyle = shadeColor(color, -30);  // 深色边框
+                    ctx.fillRect(x, y, size, size);          // 外框
+                    ctx.fillStyle = color;                   // 主颜色
+                    ctx.fillRect(x + 2, y + 2, size - 4, size - 4); // 内部方块
+                    // 添加像素点效果
+                    ctx.fillStyle = shadeColor(color, 20);   // 高光
+                    ctx.fillRect(x + size - 4, y + 2, 2, 2); // 右下角高光
+                    break;
+
+                case 'candy': {
+                    // 糖果风格：柔和的圆角矩形
+                    ctx.beginPath();
+                    ctx.roundRect(x + 2, y + 2, size - 4, size - 4, 6);
+                    ctx.fillStyle = color;
+                    ctx.fill();
+
+                    // 添加糖果光泽效果
+                    const gradient = ctx.createLinearGradient(x, y, x + size, y + size);
+                    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+                    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+
+                    // 添加糖果外框
+                    ctx.strokeStyle = shadeColor(color, -20);
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    break;
+                }
+                case 'retro':
+                    // 复古风格：Game Boy样式
+                    ctx.fillStyle = color;
+                    ctx.fillRect(x, y, size, size);
+
+                    // 添加像素化网格效果
+                    ctx.fillStyle = shadeColor(color, -30);
+                    for (let i = 0; i < size; i += 2) {
+                        for (let j = 0; j < size; j += 2) {
+                            if ((i + j) % 4 === 0) {
+                                ctx.fillRect(x + i, y + j, 2, 2);
+                            }
+                        }
+                    }
+
+                    // 添加复古边框
+                    ctx.strokeStyle = '#0F380F';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(x, y, size, size);
+                    break;
+
+                case 'metal': {
+                    // 基础金属色
+                    const baseColor = color;
+                    // 创建渐变
+                    const gradient = ctx.createLinearGradient(x, y, x + size, y + size);
+                    gradient.addColorStop(0, shadeColor(baseColor, 20));
+                    gradient.addColorStop(0.5, baseColor);
+                    gradient.addColorStop(1, shadeColor(baseColor, -20));
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(x, y, size, size);
+
+                    // 添加高光边缘
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x + 1, y + 1, size - 2, size - 2);
+
+                    // 添加内部反光
+                    ctx.beginPath();
+                    ctx.rect(x + 2, y + 2, size - 4, size - 4);
+                    const highlight = ctx.createLinearGradient(x, y, x + size, y + size);
+                    highlight.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+                    highlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                    ctx.fillStyle = highlight;
+                    ctx.fill();
+
+                    // 添加铆钉效果
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                    ctx.beginPath();
+                    ctx.arc(x + size * 0.2, y + size * 0.2, 2, 0, Math.PI * 2);
+                    ctx.arc(x + size * 0.8, y + size * 0.8, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+                }
+
+                // case 'glass': {
+                //     // 删除玻璃裂纹效果
+                //     ctx.save();
+                //     ctx.fillStyle = hexToRGBA(color, 0.6);
+                //     ctx.fillRect(x, y, size, size);
+                //     ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                //     ctx.lineWidth = 2;
+                //     ctx.strokeRect(x + 1, y + 1, size - 2, size - 2);
+                //     const gradient = ctx.createLinearGradient(x, y, x + size, y + size);
+                //     gradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+                //     gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                //     ctx.fillStyle = gradient;
+                //     ctx.fillRect(x, y, size, size);
+                //     ctx.restore();
+                //     break;
+                // }
+
+                case 'glass': {
+                    if (isShadow) {
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                    }
+                    // 基础填充
+                    ctx.fillStyle = color;
+                    ctx.fillRect(x, y, size, size);
+
+                    // 添加MC风格边框
+                    ctx.strokeStyle = getComputedStyle(document.documentElement)
+                        .getPropertyValue('--glass-border').trim();
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x + 0.5, y + 0.5, size - 1, size - 1);
+
+                    // 内部纹理效果
+                    ctx.save();
+                    ctx.globalAlpha = 0.3;
+                    for (let i = 0; i < 15; i++) { // 添加随机噪点
+                        const px = x + Math.random() * (size - 2) + 1;
+                        const py = y + Math.random() * (size - 2) + 1;
+                        ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.4})`;
+                        ctx.fillRect(px, py, 1, 1);
+                    }
+                    ctx.restore();
+
+                    // 边缘加深效果
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                    ctx.fillRect(x, y, size, 2);          // 上边缘
+                    ctx.fillRect(x, y + size - 2, size, 2); // 下边缘
+                    ctx.fillRect(x, y, 2, size);          // 左边缘
+                    ctx.fillRect(x + size - 2, y, 2, size); // 右边缘
+
+                    // 添加中心高光
+                    const gradient = ctx.createRadialGradient(
+                        x + size / 2, y + size / 2, size / 4,
+                        x + size / 2, y + size / 2, size / 2
+                    );
+                    gradient.addColorStop(0, 'rgba(255, 255, 255, 0.2)');
+                    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(x, y, size, size);
+
+                    // 如果是炸弹显示特殊标记
+                    if (isBomb) {
+                        ctx.font = `${CELL_SIZE - 6}px Arial`;
+                        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('※', x + size / 2, y + size / 2 + 4);
+                    }
+                    break;
+                }
+
+                case 'neon':
+                    // 霓虹发光效果
+                    ctx.fillStyle = color;
+                    ctx.shadowColor = color;
+                    ctx.shadowBlur = 15;
+                    ctx.beginPath();
+                    ctx.roundRect(x + 2, y + 2, CELL_SIZE - 4, CELL_SIZE - 4, 4);
+                    ctx.fill();
+
+                    // 添加脉冲动画
+                    const pulse = Math.sin(Date.now() / 100) * 2 + 2;
+                    ctx.shadowBlur = 15 + pulse;
+                    ctx.fill();
+                    break;
+
+                case 'forest':
+                    // 自然木纹效果
+                    ctx.fillStyle = color;
+                    ctx.fillRect(x, y, CELL_SIZE - 1, CELL_SIZE - 1);
+
+                    // 添加木纹纹理
+                    ctx.fillStyle = shadeColor(color, -20);
+                    for (let i = 0; i < 6; i++) {
+                        const w = Math.random() * 8 + 2;
+                        ctx.fillRect(x + Math.random() * (CELL_SIZE - w), y, w, CELL_SIZE);
+                    }
+                    break;
+
+                case 'ocean':
+                    // 水波纹效果
+                    const gradient = ctx.createLinearGradient(x, y, x + CELL_SIZE, y + CELL_SIZE);
+                    gradient.addColorStop(0, shadeColor(color, 20));
+                    gradient.addColorStop(1, shadeColor(color, -20));
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(x + CELL_SIZE / 2, y + CELL_SIZE / 2, CELL_SIZE / 2 - 2, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // 添加泡沫效果
+                    ctx.fillStyle = 'rgba(255,255,255,0.2)';
+                    for (let i = 0; i < 3; i++) {
+                        ctx.beginPath();
+                        ctx.arc(x + Math.random() * CELL_SIZE, y + Math.random() * CELL_SIZE, 2, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    break;
+
+                default:
+                    // 默认样式
+                    ctx.fillStyle = color;
+                    ctx.fillRect(x, y, size, size);
+                    // 添加高光
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.fillRect(x + 2, y + 2, size / 2 - 2, size / 2 - 2);
+            }
+
+            if (isBomb) {
+                ctx.font = `${CELL_SIZE - 6}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillText('💣', x + size / 2, y + size / 2 + 2);
+
+                ctx.shadowColor = color;
+                ctx.shadowBlur = 10;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.fillText('💣', x + size / 2, y + size / 2 + 2);
+                ctx.shadowBlur = 0;
+            }
+
+            if (currentStyle === 'glass') {
+                // 绘制玻璃裂缝
+                const gridX = Math.floor(x / CELL_SIZE);
+                const gridY = Math.floor(y / CELL_SIZE);
+                if (cracks[gridY] && cracks[gridY][gridX]) {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    // 随机生成3-5条裂缝线
+                    for (let i = 0; i < 3 + Math.floor(Math.random() * 3); i++) {
+                        const startX = x + Math.random() * CELL_SIZE;
+                        const startY = y + Math.random() * CELL_SIZE;
+                        ctx.moveTo(startX, startY);
+                        ctx.lineTo(startX + Math.random() * 10 - 5, startY + Math.random() * 10 - 5);
+                    }
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // 颜色转换辅助函数
+        function hexToRGBA(hex, alpha) {
+            const r = parseInt(hex.slice(1, 3), 16),
+                g = parseInt(hex.slice(3, 5), 16),
+                b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+
+        // 游戏暂停
+        function pauseGame() {
+            if (gameInterval) {
+                clearInterval(gameInterval);
+                gameInterval = null;
+                isPaused = true;
+                document.querySelector('.buttons button:nth-child(2)').textContent = '继续(C)';
+            } else if (isPaused) {
+                gameInterval = setInterval(gameLoop, 1000);
+                isPaused = false;
+                document.querySelector('.buttons button:nth-child(2)').textContent = '暂停(P)';
+            }
+        }
+
+
+        // 用户输入处理
+        document.addEventListener('keydown', e => {
+            if (e.key.toLowerCase() === 'p') { // 增加P键暂停功能
+                pauseGame();
+                return;
+            }
+            if (e.key.toLowerCase() === 'c' && isPaused) { // c键仅在暂停时生效
+                pauseGame();
+                return;
+            }
+            if (!currentPiece) return;
+
+            switch (e.key) {
+                case 'ArrowLeft':
+                    if (!currentPiece.collision(-1, 0)) currentPiece.x--;
+                    break;
+                case 'ArrowRight':
+                    if (!currentPiece.collision(1, 0)) currentPiece.x++;
+                    break;
+                case 'ArrowDown':
+                    if (!currentPiece.collision(0, 1)) currentPiece.y++;
+                    break;
+                case 'ArrowUp':
+                    currentPiece.rotate();
+                    break;
+                case ' ': // 空格键快速下落
+                    while (!currentPiece.collision(0, 1)) currentPiece.y++;
+                    break;
+            }
+            drawBoard();
+            switch (e.key) {
+                case 'ArrowLeft':
+                    soundEffects.move();
+                    break;
+                case 'ArrowRight':
+                    soundEffects.move();
+                    break;
+                case 'ArrowDown':
+                    soundEffects.drop();
+                    break;
+                case 'ArrowUp':
+                    soundEffects.rotate();
+                    break;
+                case ' ':
+                    soundEffects.drop();
+                    break;
+            }
+        });
+
+
+        // 高级功能扩展
+        // ​行消除逻辑
+        function clearLines() {
+            let linesCleared = 0;
+            let bombs = []; // 存储检测到的炸弹位置
+            let y = ROWS - 1;
+            // 倒序遍历所有行
+            // for (let y = ROWS - 1; y >= 0; y--) {
+            //     // 检查当前行是否被填满（包含普通方块或炸弹）
+            //     if (board[y].every(cell => cell !== 0)) {
+            //         // 遍历该行的每个单元格
+            //         board[y].forEach((cell, x) => {
+            //             // 检测炸弹并存储位置
+            //             if (cell === 8) { // 8 表示炸弹方块
+            //                 bombs.push({ x, y });
+            //             }
+
+            //             // 普通方块消除特效（生成粒子效果）
+            //             if (cell !== 0 && cell !== 8) {
+            //                 const color = COLORS[cell - 1];
+            //                 // 生成粒子效果
+            //                 for (let i = 0; i < 6; i++) {
+            //                     particles.push(new Particle(x, y, color));
+            //                 }
+            //             }
+            //         });
+
+            //         // 消除当前行并添加新行到顶部
+            //         board.splice(y, 1);
+            //         board.unshift(Array(COLS).fill(0));
+            //         linesCleared++;
+            //         y++; // 因为删除了当前行，需要重新检查新移动下来的行
+            //     }
+            // }
+            while (y >= 0) {
+                if (board[y].every(cell => cell !== 0)) {
+                    // 记录炸弹位置
+                    board[y].forEach((cell, x) => {
+                        if (cell === 8) bombs.push({ x, y });
+                        if (cell !== 0 && cell !== 8) {
+                            for (let i = 0; i < 6; i++) {
+                                particles.push(new Particle(x, y, COLORS[cell - 1]));
+                            }
+                        }
+                    });
+
+                    // 删除行并添加新行到顶部
+                    board.splice(y, 1);
+                    board.unshift(Array(COLS).fill(0));
+                    linesCleared++;
+                    // 保持y不变以检查新移动下来的行
+                } else {
+                    y--;
+                }
+            }
+
+            // 音频
+            if (linesCleared > 0) {
+                soundEffects.clearLine();
+            }
+
+            // 处理所有检测到的炸弹
+            bombs.forEach(bomb => {
+                const { x, y } = bomb;
+                // 触发炸弹爆炸效果
+                explodeBomb(x, y);
+
+                // 生成炸弹爆炸粒子（红色）
+                for (let i = 0; i < 15; i++) {
+                    particles.push(new Particle(x, y, bombColor, true)); // 使用变量替代硬编码
+                }
+            });
+
+            // 更新得分（普通消除）
+            if (linesCleared > 0) {
+                const scoreMap = { 1: 40, 2: 100, 3: 300, 4: 1200 };
+                score += (scoreMap[linesCleared] || 0);
+                document.getElementById('score').textContent = score;
+            }
+
+            // 处理连锁爆炸（如果其他炸弹被当前爆炸触发）
+            bombs.forEach(bomb => {
+                // 检查周围5x5范围内是否有其他炸弹
+                for (let dy = -2; dy <= 2; dy++) {
+                    for (let dx = -2; dx <= 2; dx++) {
+                        const newX = bomb.x + dx;
+                        const newY = bomb.y + dy;
+                        if (newX >= 0 && newX < COLS && newY >= 0 && newY < ROWS) {
+                            if (board[newY][newX] === 8) {
+                                // 触发连锁爆炸
+                                explodeBomb(newX, newY);
+                            }
+                        }
+                    }
+                }
+            });
+            if (currentStyle === 'glass') {
+                // 生成随机裂缝
+                // for (let y = 0; y < ROWS; y++) {
+                //     for (let x = 0; x < COLS; x++) {
+                //         if (board[y][x] !== 0 && Math.random() < 0.2) {
+                //             // 在周围3x3区域生成裂缝
+                //             for (let dy = -1; dy <= 1; dy++) {
+                //                 for (let dx = -1; dx <= 1; dx++) {
+                //                     if (y + dy >= 0 && y + dy < ROWS && x + dx >= 0 && x + dx < COLS) {
+                //                         cracks[y + dy][x + dx] = cracks[y + dy][x + dx] || Math.random() < 0.4;
+                //                     }
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
+                // 遍历所有被消除的方块
+                board.forEach((row, y) => {
+                    row.forEach((cell, x) => {
+                        if (cell !== 0) {
+                            // 生成玻璃碎片
+                            for (let i = 0; i < 3; i++) {
+                                const debris = new Particle(
+                                    x * CELL_SIZE + CELL_SIZE / 2,
+                                    y * CELL_SIZE + CELL_SIZE / 2,
+                                    COLORS[cell - 1]
+                                );
+                                // 设置玻璃碎片物理参数
+                                debris.vx = (Math.random() - 0.5) * 4;
+                                debris.vy = (Math.random() - 2) * 3;
+                                debris.gravity = 0.4;
+                                debris.bounce = 0.6;
+                                particles.push(debris);
+                            }
+                        }
+                    });
+                });
+            }
+
+        }
+
+        // 粒子效果
+        class Particle {
+            constructor(x, y, color, isExplosion = false) {
+                this.collisionRadius = this.size * 0.7; // 碰撞区域为实际尺寸的70%
+                // 颜色设置
+                this.color = isExplosion ? bombColor : color;
+                // 坐标转换（棋盘坐标转画布坐标）
+                this.x = x * CELL_SIZE + CELL_SIZE / 2;
+                this.y = y * CELL_SIZE + CELL_SIZE / 2;
+                this.isExplosion = isExplosion;
+
+                // 粒子运动参数调整
+                if (isExplosion) {
+                    this.vx = (Math.random() - 0.5) * 8;   // 水平速度范围：-4 ~ 4
+                    this.vy = (Math.random() - 1.5) * 6;   // 初始向上速度
+                    this.gravity = 0.5;                    // 重力稍减
+                    this.life = 1.2;
+                    this.size = 5;                         // 增大初始大小
+                } else {
+                    this.vx = (Math.random() - 0.5) * 6;    // 更自然的水平扩散
+                    this.vy = (Math.random() - 2) * 4;      // 初始向上速度
+                    this.gravity = 0.4;                    // 减小重力
+                    this.life = 1;
+                    this.size = 4;                         // 增大普通粒子
+                }
+                // 添加玻璃碎片特有属性
+                this.isGlass = currentStyle === 'glass';
+                this.rotation = Math.random() * Math.PI * 2;
+                this.rotationSpeed = (Math.random() - 0.5) * 0.2;
+                this.shape = this.generateGlassShape();
+
+                // 调整玻璃碎片物理属性
+                // if (this.isGlass) {
+                //     this.gravity = 0.4;
+                //     this.bounce = 0.6;
+                //     this.life = 2.0; // 更长的生命周期
+                //     this.decay = 0.015;
+                // }
+                if (this.isGlass) {
+                    this.decay = 0.003; // 生命周期延长至约3秒
+                    this.gravity = 0.3;  // 适当调整重力
+                    this.bounce = 0.7;   // 增加弹性系数
+                }
+                this.decay = 0.02;                         // 适当延长生命周期
+                this.impactPoints = []; // 记录碰撞时的接触点
+
+                // 玻璃碎片特有属性
+                this.isGlassDebris = currentStyle === 'glass' && isExplosion;
+                if (this.isGlassDebris) {
+                    this.life = 10 + Math.random() * 5; // 生命周期7-15秒
+                    this.decay = 0.003;
+                    this.mass = 1 + Math.random();
+                    this.bounce = 0.6;
+                    this.friction = 0.98;
+                    this.isStatic = false;
+                    this.collisionGrid = { x: -1, y: -1 };
+
+                    // 生成更复杂的碎片形状
+                    this.shape = this.generateComplexShape();
+                }
+                if (this.isGlassDebris) {
+                    this.decay = 0.015;  // 加快消失速度（约3秒生命周期）
+                    this.gravity = 0.4;
+                    this.bounce = 0.6;
+                    this.friction = 0.98;
+                    this.mass = 0.8 + Math.random() * 0.4; // 随机质量
+                    this.size = 6 + Math.random() * 4;      // 随机大小
+                }
+            }
+
+            // 生成玻璃碎片形状 记录
+            addImpactPoint(x, y) {
+                this.impactPoints.push({ x, y });
+            }
+
+            generateGlassShape() {
+                // 生成随机多边形形状
+                const sides = Math.floor(Math.random() * 3) + 3; // 3-5边形
+                const points = [];
+                const radius = this.size;
+
+                for (let i = 0; i < sides; i++) {
+                    const angle = (i / sides) * Math.PI * 2;
+                    points.push({
+                        x: Math.cos(angle) * radius,
+                        y: Math.sin(angle) * radius
+                    });
+                }
+                return points;
+            }
+
+            // 生成复杂多边形形状
+            generateComplexShape() {
+                const sides = 3 + Math.floor(Math.random() * 3); // 3-5边
+                const vertices = [];
+                const radius = this.size;
+
+                for (let i = 0; i < sides; i++) {
+                    const angle = (i / sides) * Math.PI * 2 + Math.random() * 0.5;
+                    vertices.push({
+                        x: Math.cos(angle) * radius * (0.8 + Math.random() * 0.4),
+                        y: Math.sin(angle) * radius * (0.8 + Math.random() * 0.4)
+                    });
+                }
+                return vertices;
+            }
+
+            // 更新物理模拟
+            updatePhysics() {
+                if (this.isStatic) return;
+
+                // 应用空气阻力
+                this.vx *= this.friction;
+                this.vy *= this.friction;
+
+                // 应用重力
+                this.vy += this.gravity * this.mass;
+
+                // 保存旧位置用于碰撞检测
+                const oldX = this.x;
+                const oldY = this.y;
+
+                // 更新位置
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // 边界碰撞处理（新增底部边界检测）
+                this.handleBoundaryCollision(oldX, oldY);
+
+                // 更新空间分区网格
+                this.updateCollisionGrid();
+
+                // 碎片间碰撞检测（优化后的版本）
+                this.handleDebrisCollision();
+
+                // 静态检测（当速度足够小时停止）
+                if (Math.abs(this.vx) < 0.1 && Math.abs(this.vy) < 0.1) {
+                    this.isStatic = true;
+                }
+            }
+
+            // 更新碰撞网格
+            updateCollisionGrid() {
+                const newGridX = Math.floor(this.x / GRID_SIZE);
+                const newGridY = Math.floor(this.y / GRID_SIZE);
+
+                if (newGridX !== this.collisionGrid.x || newGridY !== this.collisionGrid.y) {
+                    // 从旧网格移除
+                    if (this.collisionGrid.x !== -1) {
+                        const index = glassDebris[this.collisionGrid.y][this.collisionGrid.x]
+                            .indexOf(this);
+                        if (index > -1) glassDebris[this.collisionGrid.y][this.collisionGrid.x].splice(index, 1);
+                    }
+
+                    // 添加到新网格
+                    if (!glassDebris[newGridY]) glassDebris[newGridY] = [];
+                    if (!glassDebris[newGridY][newGridX]) glassDebris[newGridY][newGridX] = [];
+                    glassDebris[newGridY][newGridX].push(this);
+
+                    this.collisionGrid.x = newGridX;
+                    this.collisionGrid.y = newGridY;
+                }
+
+                const canvasWidth = COLS * CELL_SIZE;
+                const canvasHeight = ROWS * CELL_SIZE;
+                const bounceFactor = 0.6;
+
+                // 左右边界
+                if (this.x < this.size) {
+                    this.x = this.size;
+                    this.vx *= -bounceFactor;
+                } else if (this.x > canvasWidth - this.size) {
+                    this.x = canvasWidth - this.size;
+                    this.vx *= -bounceFactor;
+                }
+
+                // 底部边界（增加能量衰减）
+                if (this.y > canvasHeight - this.size) {
+                    this.y = canvasHeight - this.size;
+                    this.vy *= -bounceFactor;
+                    this.vx *= 0.8; // 水平摩擦
+                    if (Math.abs(this.vy) < 1) this.vy = 0;
+                }
+            }
+
+            // 碎片间碰撞处理
+            handleDebrisCollision() {
+                const neighbors = [];
+                const gridX = this.collisionGrid.x;
+                const gridY = this.collisionGrid.y;
+
+                // 检测3x3相邻网格
+                for (let y = gridY - 1; y <= gridY + 1; y++) {
+                    for (let x = gridX - 1; x <= gridX + 1; x++) {
+                        if (glassDebris[y] && glassDebris[y][x]) {
+                            neighbors.push(...glassDebris[y][x]);
+                        }
+                    }
+                }
+
+                neighbors.forEach(other => {
+                    if (other === this || other.isStatic) return;
+
+                    const dx = other.x - this.x;
+                    const dy = other.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const minDist = this.size + other.size;
+
+                    if (distance < minDist && distance > 0) {
+                        // 碰撞响应计算
+                        const angle = Math.atan2(dy, dx);
+                        const overlap = (minDist - distance) / 2;
+
+                        // 位置修正
+                        this.x -= overlap * Math.cos(angle);
+                        this.y -= overlap * Math.sin(angle);
+                        other.x += overlap * Math.cos(angle);
+                        other.y += overlap * Math.sin(angle);
+
+                        // 动量交换
+                        const v1 = { x: this.vx, y: this.vy };
+                        const v2 = { x: other.vx, y: other.vy };
+
+                        const normal = { x: dx / distance, y: dy / distance };
+                        const tangent = { x: -normal.y, y: normal.x };
+
+                        // 法向和切向速度
+                        const v1n = normal.x * v1.x + normal.y * v1.y;
+                        const v1t = tangent.x * v1.x + tangent.y * v1.y;
+                        const v2n = normal.x * v2.x + normal.y * v2.y;
+                        const v2t = tangent.x * v2.x + tangent.y * v2.y;
+
+                        // 弹性碰撞计算
+                        const m1 = this.mass, m2 = other.mass;
+                        const newV1n = (v1n * (m1 - m2) + 2 * m2 * v2n) / (m1 + m2);
+                        const newV2n = (v2n * (m2 - m1) + 2 * m1 * v1n) / (m1 + m2);
+
+                        // 更新速度
+                        this.vx = normal.x * newV1n + tangent.x * v1t;
+                        this.vy = normal.y * newV1n + tangent.y * v1t;
+                        other.vx = normal.x * newV2n + tangent.x * v2t;
+                        other.vy = normal.y * newV2n + tangent.y * v2t;
+                    }
+                });
+            }
+
+            // 边界碰撞处理
+            handleBoundaryCollision(oldX, oldY) {
+                const buffer = 2; // 边界缓冲
+
+                // 左右边界
+                if (this.x < buffer) {
+                    this.x = buffer;
+                    this.vx *= -this.bounce;
+                } else if (this.x > COLS * CELL_SIZE - buffer) {
+                    this.x = COLS * CELL_SIZE - buffer;
+                    this.vx *= -this.bounce;
+                }
+
+                // 底部边界
+                if (this.y > ROWS * CELL_SIZE - buffer) {
+                    this.y = ROWS * CELL_SIZE - buffer;
+                    this.vy *= -this.bounce;
+                    if (Math.abs(this.vy) < 1) this.vy = 0;
+                }
+            }
+
+            update() {
+                if (this.isGlassDebris) {
+                    this.updatePhysics();
+                    this.life -= this.decay;
+                    this.alpha = Math.min(1, this.life * 0.2); // 渐隐效果
+                } else {
+                    // 更新位置和速度
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.vy += this.gravity;
+
+                    // 更新生命周期
+                    this.life -= this.decay;
+
+                    // 爆炸粒子缩小效果
+                    if (this.isExplosion) {
+                        this.size *= 0.95;
+                    }
+
+                    // 添加玻璃碎片碰撞检测
+                    if (this.isGlass) {
+                        // 转换为网格坐标
+                        const gridX = Math.floor(this.x / CELL_SIZE);
+                        const gridY = Math.floor((this.y + this.size) / CELL_SIZE);
+                        // 检测是否碰到现有方块
+                        if (gridY >= 0 && gridY < ROWS && gridX >= 0 && gridX < COLS) {
+                            if (board[gridY][gridX] !== 0) {
+                                this.vy = 0;
+                                this.y = gridY * CELL_SIZE - this.size;
+                                this.vx *= 0.6; // 碰撞后水平速度衰减
+                            }
+                        }
+                        // 底部碰撞检测（游戏板高度为ROWS*CELL_SIZE）
+                        if (this.y > ROWS * CELL_SIZE - this.size) {
+                            this.y = ROWS * CELL_SIZE - this.size;
+                            this.vy *= -this.bounce;
+                            this.vx *= 0.8;
+                        }
+
+                        // 水平边界反弹
+                        if (this.x < this.size) {
+                            this.x = this.size;
+                            this.vx *= -this.bounce;
+                        }
+                        if (this.x > COLS * CELL_SIZE - this.size) {
+                            this.x = COLS * CELL_SIZE - this.size;
+                            this.vx *= -this.bounce;
+                        }
+                    }
+
+                    this.rotation += this.rotationSpeed;
+                }
+
+            }
+
+            draw(ctx) {
+                if (this.isGlassDebris) {
+                    ctx.save();
+                    ctx.globalAlpha = this.alpha;
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation);
+
+                    // 绘制复杂形状
+                    ctx.beginPath();
+                    this.shape.forEach((vert, index) => {
+                        if (index === 0) ctx.moveTo(vert.x, vert.y);
+                        else ctx.lineTo(vert.x, vert.y);
+                    });
+                    ctx.closePath();
+
+                    // 添加光照效果
+                    const gradient = ctx.createLinearGradient(
+                        -this.size, -this.size,
+                        this.size, this.size
+                    );
+                    gradient.addColorStop(0, 'rgba(255,255,255,0.3)');
+                    gradient.addColorStop(1, 'rgba(255,255,255,0)');
+
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
+
+                    ctx.restore();
+                } else {
+                    // 设置粒子颜色
+                    ctx.fillStyle = this.color;
+                    // 在复古风格中使用方形粒子
+                    if (currentStyle === 'retro') {
+                        ctx.fillRect(
+                            this.x - this.size / 2,
+                            this.y - this.size / 2,
+                            this.size,
+                            this.size
+                        );
+                    } else {
+                        // 其他风格使用圆形粒子
+                        ctx.beginPath();
+                        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+
+            }
+        }
+
+        // 爆炸音效
+        class GlassCrack {
+            // constructor(startX, startY, angle) {
+            //     this.points = [{ x: startX, y: startY }];
+            //     this.angle = angle;
+            //     this.progress = 0;
+            //     this.speed = Math.random() * 0.04 + 0.02; // 加快生长速度
+            //     this.branches = [];
+            //     this.maxBranches = 2; // 控制分支数量
+            // }
+
+            // update() {
+            //     if (this.progress < 1) {
+            //         this.progress += this.speed;
+            //         // 添加随机抖动
+            //         const jitter = Math.PI / 8 * (Math.random() - 0.5);
+            //         const currentAngle = this.angle + jitter;
+
+            //         // 添加新点
+            //         const newPoint = {
+            //             x: this.points[this.points.length - 1].x +
+            //                 Math.cos(currentAngle) * 4,
+            //             y: this.points[this.points.length - 1].y +
+            //                 Math.sin(currentAngle) * 4
+            //         };
+            //         this.points.push(newPoint);
+
+            //         // 随机生成分支
+            //         if (Math.random() < 0.3 &&
+            //             this.branches.length < this.maxBranches) {
+            //             const branchAngle = currentAngle +
+            //                 (Math.random() - 0.5) * Math.PI / 1.5;
+            //             this.branches.push(new GlassCrack(
+            //                 newPoint.x,
+            //                 newPoint.y,
+            //                 branchAngle
+            //             ));
+            //         }
+            //     }
+
+            //     // 更新分支
+            //     this.branches.forEach(branch => branch.update());
+            // }
+        }
+
+        // 爆炸效果
+        function explodeBomb(x, y) {
+            // 音频
+            soundEffects.bomb();
+            // 玻璃破碎音效
+            if (currentStyle === 'glass') {
+                playTone(1200, 0.5, 'sawtooth');
+                playTone(800, 0.5, 'square');
+            }
+            // 清除已有震动定时器
+            if (window.shakeTimer) clearInterval(window.shakeTimer);
+
+            // 设置震动参数（最大强度30）
+            shakeIntensity = Math.min(30, shakeIntensity + 8);
+
+            // 震动衰减定时器
+            window.shakeTimer = setInterval(() => {
+                shakeIntensity *= 0.85;
+                if (shakeIntensity < 0.5) {
+                    clearInterval(window.shakeTimer);
+                    shakeIntensity = 0;
+                }
+            }, 16);
+
+            const explosionRadius = 2; // 影响5x5区域
+            let bombScore = 0;
+
+            // 清除爆炸范围内的方块
+            for (let dy = -explosionRadius; dy <= explosionRadius; dy++) {
+                for (let dx = -explosionRadius; dx <= explosionRadius; dx++) {
+                    const newX = x + dx;
+                    const newY = y + dy;
+
+                    if (newX >= 0 && newX < COLS && newY >= 0 && newY < ROWS) {
+                        if (board[newY][newX] !== 0) {
+                            // 生成爆炸粒子
+                            for (let i = 0; i < 3; i++) {
+                                particles.push(new Particle(newX, newY, bombColor, true));
+                            }
+
+                            // 记录被炸毁的方块
+                            bombScore += 10;
+                            board[newY][newX] = 0;
+                        }
+                    }
+                }
+            }
+
+            // 更新得分
+            score += bombScore;
+            document.getElementById('score').textContent = score;
+
+            // 添加爆炸动画
+            explosionAnimations.push({
+                x: x * CELL_SIZE + CELL_SIZE / 2,
+                y: y * CELL_SIZE + CELL_SIZE / 2,
+                color: bombColor,
+                scale: 1,
+                alpha: 1
+            });
+
+            // 触发屏幕震动
+            shakeIntensity = Math.min(15, shakeIntensity + 8);
+
+            // 在爆炸时生成玻璃碎片
+            const debrisCount = 20 + Math.floor(Math.random() * 10);
+            for (let i = 0; i < debrisCount; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 4 + Math.random() * 6;
+                const debris = new Particle(
+                    x * CELL_SIZE + CELL_SIZE / 2,
+                    y * CELL_SIZE + CELL_SIZE / 2,
+                    bombColor,
+                    true
+                );
+
+                // 设置更自然的初始速度
+                debris.vx = Math.cos(angle) * speed;
+                debris.vy = Math.sin(angle) * speed - 4;
+                debris.rotationSpeed = (Math.random() - 0.5) * 0.15;
+
+                // 添加随机旋转
+                debris.rotation = Math.random() * Math.PI * 2;
+
+                particles.push(debris);
+            }
+
+            const isGlassStyle = currentStyle === 'glass';
+            const explosionCount = isGlassStyle ? 25 : 15;
+
+            for (let i = 0; i < explosionCount; i++) {
+                particles.push(new Particle(x, y, bombColor, true));
+            }
+
+            if (currentStyle === 'glass') {
+                const debrisCount = 15 + Math.floor(Math.random() * 10);
+                for (let i = 0; i < debrisCount; i++) {
+                    const debris = new Particle(
+                        x * CELL_SIZE + CELL_SIZE / 2,
+                        y * CELL_SIZE + CELL_SIZE / 2,
+                        bombColor,
+                        true
+                    );
+
+                    // 设置随机初始速度
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = 3 + Math.random() * 5;
+                    debris.vx = Math.cos(angle) * speed;
+                    debris.vy = Math.sin(angle) * speed - 3;
+
+                    particles.push(debris);
+                }
+            }
+        }
+
+        // 屏幕特效函数
+        function startScreenEffects() {
+            // 清除已有震动定时器
+            if (window.shakeTimer) clearInterval(window.shakeTimer);
+
+            // 创建全屏白光动画
+            const overlay = document.createElement('div');
+            overlay.className = 'game-over-overlay';
+            document.body.appendChild(overlay);
+
+            // 启动屏幕抖动（持续0.3秒）
+            shakeIntensity = 15;
+
+            // 震动衰减定时器
+            window.shakeTimer = setInterval(() => {
+                shakeIntensity *= 0.85;
+            }, 16);
+
+            // 0.3秒后强制停止震动
+            setTimeout(() => {
+                clearInterval(window.shakeTimer);
+                shakeIntensity = 0;
+            }, 300);
+
+            // 启动渐入白光
+            let whiteTimer = setInterval(() => {
+                whiteAlpha = Math.min(whiteAlpha + 0.02, 0.6);
+                if (whiteAlpha >= 0.6) clearInterval(whiteTimer);
+            }, 16);
+
+            // 1.5秒后重置其他状态
+            setTimeout(() => {
+                isGameOver = true;
+                explosionAnimations = [];
+                document.body.removeChild(overlay);
+            }, 1500);
+        }
+
+        // 新增独立渲染循环
+        function gameRender(timestamp) {
+            // 清除超过生命周期的碎片
+            particles = particles.filter(p => {
+                if (p.isGlassDebris) return p.life > 0;
+                return true;
+            });
+
+            // 始终运行渲染循环
+            const deltaTime = timestamp - lastTime;
+            if (deltaTime > 1000 / frameRate) {
+                // 更新粒子效果
+                particles = particles.filter(p => {
+                    p.update();
+                    return p.life > 0;
+                }).slice(-MAX_PARTICLES);
+
+                // 更新爆炸动画
+                explosionAnimations = explosionAnimations.filter(anim => {
+                    anim.scale += 0.15;
+                    anim.alpha -= 0.03;
+                    return anim.alpha > 0;
+                });
+
+                drawBoard();
+                lastTime = timestamp;
+            }
+            // 更新裂纹动画
+            // activeCracks = activeCracks.filter(crack => {
+            //     crack.update();
+            //     return crack.progress < 1 || crack.branches.length > 0;
+            // });
+
+            // 更新裂纹动画（补充这部分）
+            // activeCracks.forEach(crack => crack.update());
+
+            // // 处理分支裂纹（新增代码）
+            // activeCracks = activeCracks.reduce((acc, crack) => {
+            //     acc.push(crack);
+            //     crack.branches.forEach(branch => acc.push(branch));
+            //     return acc;
+            // }, []);
+
+            // 过滤已完成裂纹（补充过滤条件）
+            // activeCracks = activeCracks.filter(crack =>
+            //     crack.progress < 1 || crack.branches.some(b => b.progress < 1)
+            // );
+
+            // 当方块锁定时生成新裂纹
+            // if (needGenerateCracks) {
+            //     generateCracksFromImpact();
+            //     needGenerateCracks = false;
+            // }
+            requestAnimationFrame(gameRender);
+        }
+
+        // ​游戏流程控制
+        function gameLoop() {
+            if (currentPiece.collision(0, 1)) {
+                lockPiece();
+                needGenerateCracks = true;
+                clearLines();
+
+                // 确保正确传递下一个方块
+                currentPiece = nextPiece;
+                currentPiece.x = Math.floor(COLS / 2) - Math.floor(currentPiece.shape[0].length / 2);
+                currentPiece.y = 0;
+
+                // 生成新方块前检查有效性
+                nextPiece = new Tetromino();
+                drawNext();
+
+                // 优化碰撞检测
+                if (currentPiece.collision(0, 0)) {
+                    setTimeout(() => { // 延迟检测避免误判
+                        if (currentPiece.collision(0, 0)) gameOver();
+                    }, 50);
+                }
+            } else {
+                currentPiece.y++;
+            }
+            drawBoard();
+        }
+
+        function startGame() {
+            initCanvasSize();
+            if (isGameOver) {
+                currentPiece = new Tetromino();
+                nextPiece = new Tetromino();
+                drawNext();
+                // 使用当前尺寸初始化游戏板
+                board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+
+                score = 0;
+                document.getElementById('score').textContent = score;
+                // 音频
+                initAudio();
+                if (audioContext.state === 'suspended') {
+                    audioContext.resume();
+                }
+                bgMusic.play().catch(() => { });
+
+
+                if (gameInterval) return;
+                if (window.shakeTimer) clearInterval(window.shakeTimer);
+                isGameOver = false; // 重置游戏结束状态
+                board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+                score = 0;
+                whiteAlpha = 0;      // 重置白光透明度
+                shakeIntensity = 0;  // 重置抖动强度
+                particles = [];     // 清空粒子效果
+                // nextPiece = new Tetromino();
+                // currentPiece = new Tetromino();
+                // drawNext();
+                gameInterval = setInterval(gameLoop, 1000);
+
+                // 保持游戏逻辑更新频率（30fps）
+                // gameInterval = setInterval(gameLoop, 1000 / 30);
+
+                // 启动独立渲染循环（60fps）
+                requestAnimationFrame(gameRender);
+                cracks = Array(ROWS).fill().map(() => Array(COLS).fill(false));
+            }
+            else {
+                isGameOver = false; // 重置游戏结束状态
+            }
+            const validatePosition = (piece) => {
+                piece.x = Math.floor(COLS / 2) - Math.floor(piece.shape[0].length / 2);
+                if (piece.collision(0, 0)) {
+                    piece.y = -1; // 允许半格进入
+                }
+            };
+
+            validatePosition(currentPiece);
+            validatePosition(nextPiece);
+            cracks = Array(ROWS).fill().map(() => Array(COLS).fill(false)); // 使用false初始化
+        }
+
+        // 新增游戏结束处理
+        function gameOver() {
+            // 音频
+            soundEffects.gameOver();
+            bgMusic.pause();
+
+            clearInterval(gameInterval);
+            gameInterval = null;
+            isGameOver = true; // 标记游戏结束状态
+            // alert(`游戏结束！得分：${score}`);
+            // 收集所有方块用于爆炸动画
+            board.forEach((row, y) => {
+                row.forEach((cell, x) => {
+                    if (cell) {
+                        explosionAnimations.push({
+                            x: x * CELL_SIZE + CELL_SIZE / 2,
+                            y: y * CELL_SIZE + CELL_SIZE / 2,
+                            color: bombColor, // 使用炸弹颜色变量
+                            scale: 1,
+                            alpha: 1
+                        });
+
+                        // 生成爆炸粒子
+                        for (let i = 0; i < 8; i++) {
+                            particles.push(new Particle(x, y, COLORS[cell - 1], true));
+                        }
+                    }
+                });
+            });
+
+            // 清空游戏板
+            board = Array(ROWS).fill().map(() => Array(COLS).fill(0));
+
+            // 启动屏幕特效
+            startScreenEffects();
+        }
+
+
+        // 主题切换👇
+
+        // 主题切换功能
+        const themeToggle = document.getElementById('themeToggle');
+
+        // 初始化主题
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeToggle.checked = savedTheme === 'dark';
+
+        // 切换事件
+        themeToggle.addEventListener('change', (e) => {
+            const theme = e.target.checked ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            document.querySelector('.theme-label').textContent = theme === 'dark' ? '夜间模式' : '白天模式';
+            updateColors();
+            drawBoard();
+            drawNext();
+            if (nextPiece) {
+                nextPiece.color = COLORS[nextPiece.shapeIndex]; // 更新下一方块颜色
+                drawNext();
+            }
+        });
+
+        // 初始化时更新颜色
+        updateColors();
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        });
+
+        document.addEventListener('touchmove', e => {
+            e.preventDefault();
+        }, { passive: false });
+
+        document.addEventListener('touchend', e => {
+            const deltaX = e.changedTouches[0].clientX - touchStartX;
+            const deltaY = e.changedTouches[0].clientY - touchStartY;
+
+            if (Math.abs(deltaX) > touchThreshold || Math.abs(deltaY) > touchThreshold) {
+                if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                    if (deltaX > 0) handleMove('right');
+                    else handleMove('left');
+                } else {
+                    if (deltaY > 0) handleMove('down');
+                    else handleMove('rotate');
+                }
+            }
+        });
+
+        // 虚拟按钮事件绑定
+        document.querySelectorAll('.mobile-btn').forEach(btn => {
+            btn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                const action = {
+                    '←': 'left',
+                    '→': 'right',
+                    '↻': 'rotate',
+                    '↓': 'down'
+                }[btn.textContent];
+                handleMove(action);
+            });
+        });
+
+        function handleMove(action) {
+            if (!currentPiece || isPaused) return;
+
+            switch (action) {
+                case 'left':
+                    if (!currentPiece.collision(-1, 0)) currentPiece.x--;
+                    soundEffects.move();
+                    break;
+                case 'right':
+                    if (!currentPiece.collision(1, 0)) currentPiece.x++;
+                    soundEffects.move();
+                    break;
+                case 'down':
+                    if (!currentPiece.collision(0, 1)) currentPiece.y++;
+                    soundEffects.drop();
+                    break;
+                case 'rotate':
+                    currentPiece.rotate();
+                    soundEffects.rotate();
+                    break;
+            }
+            drawBoard();
+        }
+
+        // 在window resize时调整画布
+        window.addEventListener('resize', () => {
+            initCanvasSize();
+            drawBoard();
+        });
+
+        // 添加横屏检测
+        function checkOrientation() {
+            if (window.innerHeight > window.innerWidth) {
+                alert("建议横屏体验更佳！");
+            }
+        }
+        window.addEventListener('resize', checkOrientation);
+    </script>
+</body>
+
+</html>

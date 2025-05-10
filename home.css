@@ -982,3 +982,78 @@ input:checked+.slider:before {
         border-color: #1e8449;
     }
 }
+
+
+/* ===== 俄罗斯方块按钮 ===== */
+.tetris-btn {
+    position: fixed;
+    left: 20px;
+    top: 80px; /* 调整与贪吃蛇按钮的间距 */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+    color: white;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+    text-decoration: none;
+    z-index: 9998;
+    transition: var(--transition);
+    transform-origin: left center;
+    animation: tetrisPulse 2s ease-in-out infinite;
+    border: 2px solid #d35400;
+}
+
+.tetris-btn:hover {
+    transform: scale(1.05) rotate(2deg);
+    box-shadow: 0 6px 20px rgba(230, 126, 34, 0.4);
+    animation: none;
+}
+
+.tetris-icon {
+    font-size: 1.4em;
+    transition: transform 0.3s ease;
+    display: inline-block;
+    transform: rotate(45deg);
+}
+
+.tetris-text {
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes tetrisPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+    }
+    50% {
+        transform: scale(1.03) rotate(3deg);
+        box-shadow: 0 6px 25px rgba(230, 126, 34, 0.4);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(230, 126, 34, 0.3);
+    }
+}
+
+/* 暗色模式适配 */
+@media (prefers-color-scheme: dark) {
+    .tetris-btn {
+        background: linear-gradient(135deg, #d35400 0%, #b03a0e 100%);
+        border-color: #943b0a;
+    }
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .tetris-btn {
+        padding: 10px 16px;
+        font-size: 0.9em;
+        top: 70px;
+    }
+    .tetris-icon {
+        font-size: 1.2em;
+    }
+}
