@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本地AI聊天助手</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="light-mode">
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <button id="new-chat-btn" class="btn primary-btn">
+                    <i class="fas fa-plus"></i> 新建聊天
+                </button>
+            </div>
+
+            <!-- 历史记录 -->
+            <div class="history-section">
+                <h3><i class="fas fa-history"></i> 聊天历史</h3>
+                <div id="history-list" class="history-list">
+                    <!-- 历史记录会通过JS动态生成 -->
+                </div>
+            </div>
+
+            <!-- 模型选择 -->
+            <div class="model-section">
+                <h3><i class="fas fa-robot"></i> 选择模型</h3>
+                <select id="model-select" class="form-control">
+                    <option value="deepseek-r1:8b">deepseek-r1:8b</option>
+                    <option value="qwen3-vl:4b">qwen3-vl:4b</option>
+                </select>
+                <div id="model-info" class="model-info">
+                    <small>选择模型以启用相应功能</small>
+                </div>
+            </div>
+
+            <!-- 设置入口 -->
+            <div class="settings-section">
+                <button id="settings-btn" class="btn secondary-btn">
+                    <i class="fas fa-cog"></i> 设置
+                </button>
+            </div>
+        </aside>
+
+        <!-- 主聊天区域 -->
+        <main class="chat-main">
+            <div class="chat-header">
+                <h2 id="chat-title">新聊天</h2>
+                <div class="header-actions">
+                    <button id="delete-current-chat" class="btn danger-btn">
+                        <i class="fas fa-trash"></i> 删除当前聊天
+                    </button>
+                </div>
+            </div>
+
+            <!-- 聊天内容区 -->
+            <div id="chat-messages" class="chat-messages">
+                <!-- 欢迎提示 -->
+                <div class="welcome-message">
+                    <h3>欢迎使用本地AI助手</h3>
+                    <p>请选择模型并输入问题开始交流</p>
+                </div>
+            </div>
+
+            <!-- 输入区域 -->
+            <div class="chat-input-area">
+                <!-- 文件上传区域 -->
+                <div id="file-upload-area" class="file-upload-area" style="display: none;">
+                    <!-- 图片上传 -->
+                    <div id="image-upload-section" class="upload-section">
+                        <h4><i class="fas fa-image"></i> 图片上传</h4>
+                        <div class="uploaded-files" id="uploaded-images">
+                            <!-- 上传的图片会显示在这里 -->
+                        </div>
+                        <div class="upload-actions">
+                            <label for="image-upload" class="btn secondary-btn">
+                                <i class="fas fa-plus"></i> 添加图片
+                            </label>
+                            <button id="clear-images" class="btn danger-btn">
+                                <i class="fas fa-times"></i> 清空图片
+                            </button>
+                        </div>
+                        <input type="file" id="image-upload" accept="image/*" multiple style="display: none;">
+                    </div>
+
+                    <!-- 文本文件上传 -->
+                    <div id="text-upload-section" class="upload-section">
+                        <h4><i class="fas fa-file-alt"></i> 文档上传</h4>
+                        <div class="uploaded-files" id="uploaded-text-files">
+                            <!-- 上传的文本文件会显示在这里 -->
+                        </div>
+                        <div class="upload-actions">
+                            <label for="text-upload" class="btn secondary-btn">
+                                <i class="fas fa-plus"></i> 添加文档
+                            </label>
+                            <button id="clear-text-files" class="btn danger-btn">
+                                <i class="fas fa-times"></i> 清空文档
+                            </button>
+                        </div>
+                        <input type="file" id="text-upload" accept=".txt,.pdf,.doc,.docx,.md,.csv,.json,.xml,.html" multiple style="display: none;">
+                    </div>
+
+                    <div class="file-preview" id="file-preview">
+                        <!-- 文件预览内容会显示在这里 -->
+                    </div>
+                </div>
+
+                <textarea 
+                    id="user-input" 
+                    placeholder="输入你的问题..." 
+                    rows="3"
+                    class="input-textarea"
+                ></textarea>
+                <div class="input-actions">
+                    <button id="toggle-file-btn" class="btn secondary-btn">
+                        <i class="fas fa-paperclip"></i> 文件
+                    </button>
+                    <button id="stop-btn" class="btn danger-btn" style="display: none;">
+                        <i class="fas fa-stop"></i> 停止回答
+                    </button>
+                    <button id="send-btn" class="btn send-btn">
+                        <i class="fas fa-paper-plane"></i> 发送
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 设置模态框 -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>设置</h2>
+            
+            <div class="setting-item">
+                <label for="dark-mode-toggle">
+                    <i class="fas fa-moon"></i> 夜间模式
+                </label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="dark-mode-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="setting-item">
+                <label for="think-mode-toggle">
+                    <i class="fas fa-brain"></i> 深度思考模式
+                </label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="think-mode-toggle">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div class="setting-item">
+                <label for="default-model">默认模型</label>
+                <select id="default-model" class="form-control">
+                    <option value="deepseek-r1:8b">deepseek-r1:8b</option>
+                    <option value="qwen3-vl:4b">qwen3-vl:4b</option>
+                </select>
+            </div>
+
+            <button id="save-settings" class="btn primary-btn">保存设置</button>
+        </div>
+    </div>
+
+    <!-- 图片预览模态框 -->
+    <div id="image-modal" class="image-modal">
+        <span class="close-image-modal">&times;</span>
+        <div class="image-modal-content">
+            <img src="" alt="预览图片">
+        </div>
+    </div>
+
+    <!-- 引入mammoth.js用于Word文档解析 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <!-- 引入pdf.js用于PDF文档解析 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // 设置pdf.js的工作路径
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+
+    <script src="script.js"></script>
+</body>
+</html>
