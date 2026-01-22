@@ -4,13 +4,11 @@ let chatHistory = {};
 let settings = {
     darkMode: false,
     thinkMode: false,
-    defaultModel: 'deepseek-r1:8b',
-    useCorsProxy: false, // 新增：是否使用CORS代理
-    ollamaUrl: 'http://localhost:11434' // 新增：Ollama服务地址
+    defaultModel: 'deepseek-r1:8b'
 };
-let uploadedImages = [];
-let uploadedTextFiles = [];
-let currentAbortController = null;
+let uploadedImages = []; // 存储上传的图片数据
+let uploadedTextFiles = []; // 存储上传的文本文件数据
+let currentAbortController = null; // 用于中止请求
 
 // 支持的文件类型和对应的图标
 const FILE_TYPES = {
@@ -27,13 +25,6 @@ const FILE_TYPES = {
 
 // 支持图片的模型列表
 const IMAGE_SUPPORTED_MODELS = ['qwen3-vl:4b'];
-
-// CORS代理服务器列表（可用的公共代理）
-const CORS_PROXIES = [
-    'https://cors-anywhere.herokuapp.com/',
-    'https://api.codetabs.com/v1/proxy?quest=',
-    'https://corsproxy.io/?'
-];
 
 // DOM 元素
 const newChatBtn = document.getElementById('new-chat-btn');
@@ -72,9 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initEventListeners();
     renderHistoryList();
     
-    // 检查Ollama服务是否可用
-    checkOllamaConnection();
-    
     if (Object.keys(chatHistory).length > 0) {
         const firstChatId = Object.keys(chatHistory)[0];
         loadChat(firstChatId);
@@ -82,152 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
         createNewChat();
     }
     
+    // 初始化模型支持状态
     updateModelSupport();
 });
-
-// 检查Ollama连接状态
-async function checkOllamaConnection() {
-    try {
-        const response = await fetchWithCors(`${settings.ollamaUrl}/api/tags`, {
-            method: 'GET',
-            timeout: 5000
-        });
-        
-        if (response.ok) {
-            console.log('Ollama服务连接正常');
-            showStatus('Ollama服务连接正常', 'success');
-        } else {
-            throw new Error(`HTTP错误: ${response.status}`);
-        }
-    } catch (error) {
-        console.warn('无法连接到Ollama服务:', error.message);
-        showStatus(`无法连接到Ollama服务: ${error.message}`, 'warning');
-        
-        // 自动尝试使用CORS代理
-        if (!settings.useCorsProxy) {
-            setTimeout(() => {
-                if (confirm('检测到Ollama服务连接失败，是否尝试使用CORS代理？')) {
-                    settings.useCorsProxy = true;
-                    saveToLocalStorage();
-                    applySettings();
-                    showStatus('已启用CORS代理，请重试', 'info');
-                }
-            }, 1000);
-        }
-    }
-}
-
-// 带CORS处理的fetch函数
-async function fetchWithCors(url, options = {}) {
-    // 如果是本地文件协议，直接访问
-    if (window.location.protocol === 'file:') {
-        return fetch(url, options);
-    }
-    
-    let targetUrl = url;
-    
-    // 如果启用了CORS代理且不是同源请求
-    if (settings.useCorsProxy && !isSameOrigin(url)) {
-        const proxyUrl = CORS_PROXIES[0]; // 使用第一个可用的代理
-        targetUrl = proxyUrl + encodeURIComponent(url);
-        
-        // 添加代理特定的headers
-        options.headers = {
-            ...options.headers,
-            'X-Requested-With': 'XMLHttpRequest'
-        };
-    }
-    
-    // 添加超时处理
-    const timeout = options.timeout || 30000;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
-    
-    try {
-        const response = await fetch(targetUrl, {
-            ...options,
-            signal: controller.signal,
-            mode: 'cors'
-        });
-        
-        clearTimeout(timeoutId);
-        return response;
-    } catch (error) {
-        clearTimeout(timeoutId);
-        
-        // 如果第一个代理失败，尝试其他代理
-        if (error.name === 'TypeError' && CORS_PROXIES.length > 1) {
-            console.log('尝试备用CORS代理...');
-            const backupProxy = CORS_PROXIES[1];
-            targetUrl = backupProxy + encodeURIComponent(url);
-            
-            const backupResponse = await fetch(targetUrl, {
-                ...options,
-                mode: 'cors'
-            });
-            return backupResponse;
-        }
-        
-        throw error;
-    }
-}
-
-// 检查是否为同源请求
-function isSameOrigin(url) {
-    try {
-        const parsedUrl = new URL(url);
-        return parsedUrl.origin === window.location.origin;
-    } catch (e) {
-        return false;
-    }
-}
-
-// 显示状态消息
-function showStatus(message, type = 'info') {
-    // 移除已有的状态消息
-    const existingStatus = document.getElementById('connection-status');
-    if (existingStatus) {
-        existingStatus.remove();
-    }
-    
-    const statusDiv = document.createElement('div');
-    statusDiv.id = 'connection-status';
-    statusDiv.className = `status-message status-${type}`;
-    statusDiv.innerHTML = `
-        <i class="fas fa-${getStatusIcon(type)}"></i>
-        <span>${message}</span>
-        <button class="status-close"><i class="fas fa-times"></i></button>
-    `;
-    
-    // 添加到页面顶部
-    const chatHeader = document.querySelector('.chat-header');
-    chatHeader.parentNode.insertBefore(statusDiv, chatHeader);
-    
-    // 添加关闭按钮事件
-    const closeBtn = statusDiv.querySelector('.status-close');
-    closeBtn.addEventListener('click', () => {
-        statusDiv.remove();
-    });
-    
-    // 5秒后自动隐藏信息消息
-    if (type === 'info') {
-        setTimeout(() => {
-            if (statusDiv.parentNode) {
-                statusDiv.remove();
-            }
-        }, 5000);
-    }
-}
-
-// 获取状态图标
-function getStatusIcon(type) {
-    switch (type) {
-        case 'success': return 'check-circle';
-        case 'warning': return 'exclamation-triangle';
-        case 'error': return 'times-circle';
-        default: return 'info-circle';
-    }
-}
 
 // 加载本地存储
 function loadFromLocalStorage() {
@@ -330,24 +175,6 @@ function initEventListeners() {
     
     // 模型选择变化时更新支持状态
     modelSelect.addEventListener('change', updateModelSupport);
-
-    // 添加CORS代理切换事件
-    const corsProxyToggle = document.getElementById('cors-proxy-toggle');
-    if (corsProxyToggle) {
-        corsProxyToggle.checked = settings.useCorsProxy;
-        corsProxyToggle.addEventListener('change', (e) => {
-            settings.useCorsProxy = e.target.checked;
-        });
-    }
-    
-    // 添加Ollama URL输入事件
-    const ollamaUrlInput = document.getElementById('ollama-url');
-    if (ollamaUrlInput) {
-        ollamaUrlInput.value = settings.ollamaUrl;
-        ollamaUrlInput.addEventListener('change', (e) => {
-            settings.ollamaUrl = e.target.value;
-        });
-    }
 }
 
 // 停止生成函数
@@ -1028,7 +855,7 @@ async function sendMessage() {
         // 创建AbortController用于中止请求
         currentAbortController = new AbortController();
         
-        const response = await fetchWithCors(`${settings.ollamaUrl}/api/chat`, {
+        const response = await fetch('http://localhost:11434/api/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -1101,61 +928,39 @@ async function sendMessage() {
             }
         }
     } catch (error) {
-        // 增强错误处理
-        console.error('发送消息失败:', error);
-        
-        let errorMessage = '请求失败: ';
+        // 如果是中止请求导致的错误，不显示错误信息
         if (error.name === 'AbortError') {
-            errorMessage = '请求已被用户中止';
-        } else if (error.name === 'TypeError') {
-            errorMessage = '网络错误: 请检查Ollama服务是否运行，或尝试启用CORS代理';
+            console.log('请求已被用户中止');
+            
+            // 保存已生成的部分内容
+            const assistantMsg = {
+                role: 'assistant',
+                content: assistantContent,
+                thinking: thinkingContent,
+                duration: 0,
+                stopped: true
+            };
+            chatHistory[currentChatId].messages.push(assistantMsg);
+            saveToLocalStorage();
         } else {
-            errorMessage += error.message;
+            console.error('发送消息失败:', error);
+            const assistantMsgDiv = chatMessages.querySelector('.message.assistant-message:last-child');
+            if (assistantMsgDiv) {
+                assistantMsgDiv.querySelector('.message-content').textContent = `出错了：${error.message}`;
+            }
+            
+            chatHistory[currentChatId].messages.push({
+                role: 'assistant',
+                content: `出错了：${error.message}`,
+                thinking: '',
+                duration: 0
+            });
+            saveToLocalStorage();
         }
-        
-        const assistantMsgDiv = chatMessages.querySelector('.message.assistant-message:last-child');
-        if (assistantMsgDiv) {
-            assistantMsgDiv.querySelector('.message-content').innerHTML = `
-                <div style="color: #dc3545;">
-                    <strong>${errorMessage}</strong><br>
-                    <small>请检查: 
-                    <br>1. Ollama服务是否在 ${settings.ollamaUrl} 运行
-                    <br>2. 防火墙设置是否允许访问
-                    <br>3. 尝试在设置中启用CORS代理</small>
-                    <br><button class="btn primary-btn" onclick="retryConnection()" style="margin-top: 0.5rem;">
-                        <i class="fas fa-redo"></i> 重试连接
-                    </button>
-                </div>
-            `;
-        }
-        
-        // 保存错误消息到历史记录
-        chatHistory[currentChatId].messages.push({
-            role: 'assistant',
-            content: errorMessage,
-            thinking: '',
-            duration: 0
-        });
-        saveToLocalStorage();
     } finally {
         // 恢复按钮状态
         stopBtn.style.display = 'none';
         sendBtn.style.display = 'flex';
         currentAbortController = null;
-    }
-}
-
-// 重试连接函数
-function retryConnection() {
-    checkOllamaConnection();
-    
-    // 重新启用发送按钮
-    stopBtn.style.display = 'none';
-    sendBtn.style.display = 'flex';
-    
-    // 移除错误消息
-    const assistantMsgDiv = chatMessages.querySelector('.message.assistant-message:last-child');
-    if (assistantMsgDiv) {
-        assistantMsgDiv.querySelector('.message-content').innerHTML = '<span class="loading">重新连接中……</span>';
     }
 }

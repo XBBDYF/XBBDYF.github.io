@@ -1,20 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>本地AI聊天助手</title>
-
-    <!-- 添加CORS和存储相关meta标签 -->
-    <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; connect-src 'self' http://localhost:11434 ws: wss:;">
-    <meta name="referrer" content="no-referrer">
-
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body class="light-mode">
     <div class="app-container">
         <!-- 侧边栏 -->
@@ -108,8 +100,7 @@
                                 <i class="fas fa-times"></i> 清空文档
                             </button>
                         </div>
-                        <input type="file" id="text-upload" accept=".txt,.pdf,.doc,.docx,.md,.csv,.json,.xml,.html"
-                            multiple style="display: none;">
+                        <input type="file" id="text-upload" accept=".txt,.pdf,.doc,.docx,.md,.csv,.json,.xml,.html" multiple style="display: none;">
                     </div>
 
                     <div class="file-preview" id="file-preview">
@@ -117,7 +108,12 @@
                     </div>
                 </div>
 
-                <textarea id="user-input" placeholder="输入你的问题..." rows="3" class="input-textarea"></textarea>
+                <textarea 
+                    id="user-input" 
+                    placeholder="输入你的问题..." 
+                    rows="3"
+                    class="input-textarea"
+                ></textarea>
                 <div class="input-actions">
                     <button id="toggle-file-btn" class="btn secondary-btn">
                         <i class="fas fa-paperclip"></i> 文件
@@ -138,7 +134,7 @@
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2>设置</h2>
-
+            
             <div class="setting-item">
                 <label for="dark-mode-toggle">
                     <i class="fas fa-moon"></i> 夜间模式
@@ -167,32 +163,6 @@
                 </select>
             </div>
 
-            <div class="setting-item">
-                <label for="ollama-url">
-                    <i class="fas fa-server"></i> Ollama服务地址
-                </label>
-                <input type="text" id="ollama-url" class="form-control" placeholder="http://localhost:11434">
-            </div>
-
-            <div class="setting-item">
-                <label for="cors-proxy-toggle">
-                    <i class="fas fa-exchange-alt"></i> 使用CORS代理
-                </label>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="cors-proxy-toggle">
-                    <span class="slider round"></span>
-                </label>
-            </div>
-
-            <div class="setting-item">
-                <label for="test-connection">
-                    <i class="fas fa-plug"></i> 测试连接
-                </label>
-                <button id="test-connection" class="btn secondary-btn">
-                    <i class="fas fa-bolt"></i> 测试
-                </button>
-            </div>
-
             <button id="save-settings" class="btn primary-btn">保存设置</button>
         </div>
     </div>
@@ -216,5 +186,4 @@
 
     <script src="script.js"></script>
 </body>
-
 </html>
