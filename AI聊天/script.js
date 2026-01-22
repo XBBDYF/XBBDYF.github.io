@@ -855,7 +855,7 @@ async function sendMessage() {
         // 创建AbortController用于中止请求
         currentAbortController = new AbortController();
         
-        const response = await fetch('http://localhost:11434/api/chat', {
+        const response = await fetch('http://192.168.1.14:11434/api/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
