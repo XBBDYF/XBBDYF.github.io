@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>我的作品集 - 施工中 | 个人博客</title>
+    <!-- 引入CSS样式文件 -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 网站图标 (保留原有火箭图标) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚧</text></svg>">
+    <style>
+        /* ========== 施工中专用样式 (锤子敲击动画) ========== */
+        .construction-block {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 40px;
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow);
+            margin: 1rem 0;
+        }
+
+        .hammer-area {
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hammer-icon {
+            font-size: 5rem;
+            display: inline-block;
+            animation: hammerHit 0.6s infinite ease-in-out;
+            transform-origin: top center;
+            cursor: default;
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2));
+        }
+
+        /* 辅助敲击小火花 */
+        .spark {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #fbbf24;
+            border-radius: 50%;
+            opacity: 0;
+            animation: sparkFlash 0.6s infinite;
+        }
+
+        .spark-1 { top: 20%; right: 10%; animation-delay: 0s; }
+        .spark-2 { bottom: 30%; left: 5%; animation-delay: 0.15s; }
+        .spark-3 { top: 50%; right: 0%; animation-delay: 0.3s; }
+
+        @keyframes hammerHit {
+            0% { transform: rotate(0deg) translateY(0); }
+            25% { transform: rotate(-25deg) translateY(-5px); }
+            50% { transform: rotate(5deg) translateY(2px); }
+            75% { transform: rotate(-15deg) translateY(-2px); }
+            100% { transform: rotate(0deg) translateY(0); }
+        }
+
+        @keyframes sparkFlash {
+            0% { opacity: 0; transform: scale(0.5); }
+            20% { opacity: 1; transform: scale(1.2); background: #ffb347; }
+            100% { opacity: 0; transform: scale(0); }
+        }
+
+        .construction-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), #f59e0b);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin: 0.8rem 0 0.5rem;
+        }
+
+        .construction-text {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 400px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .construction-badge {
+            background: var(--accent-glow);
+            color: var(--accent);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        /* 针对联系区域保留温馨提示背景 */
+        .contact-construction {
+            width: 100%;
+        }
+        .inline-hammer {
+            font-size: 2rem;
+            display: inline-block;
+            animation: hammerHit 0.8s infinite ease;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .contact-info.construction-mode {
+            justify-content: center;
+            text-align: center;
+        }
+        /* 覆盖原来联系区域布局，让施工块更突出 */
+        .contact-grid .construction-block {
+            grid-column: span 2;
+            width: 100%;
+        }
+        @media (max-width: 768px) {
+            .construction-title { font-size: 1.4rem; }
+            .hammer-icon { font-size: 3.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== 粒子背景画布 ==================== -->
+    <canvas id="particleCanvas" aria-hidden="true"></canvas>
+
+    <!-- ==================== 导航栏 ==================== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo">
+                <span class="logo-bracket">{</span>
+                <span class="logo-text">MyPortfolio</span>
+                <span class="logo-bracket">}</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" class="nav-link active">首页</a></li>
+                <li><a href="#about" class="nav-link">关于我</a></li>
+                <li><a href="#skills" class="nav-link">技能</a></li>
+                <li><a href="#projects" class="nav-link">项目</a></li>
+                <li><a href="#contact" class="nav-link">联系我</a></li>
+            </ul>
+            <!-- 主题切换按钮 -->
+            <button class="theme-toggle" id="themeToggle" aria-label="切换主题" title="切换深色/浅色主题">
+                <span class="theme-icon">🌙</span>
+            </button>
+            <!-- 移动端汉堡菜单按钮 -->
+            <button class="hamburger" id="hamburger" aria-label="菜单">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ==================== 滚动进度条 ==================== -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- ==================== 主内容区域 ==================== -->
+    <main>
+        <!-- ========== 首页 Hero 区域 (不变) ========== -->
+        <section id="home" class="hero-section">
+            <div class="hero-content">
+                <div class="hero-avatar-wrapper">
+                    <div class="hero-avatar-ring"></div>
+                    <!-- 头像图片：请将您的头像放在 img/avatar.jpg -->
+                    <img src="img/avatar.jpg" alt="我的头像" class="hero-avatar"
+                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <div class="hero-avatar-fallback" style="display:none;">
+                        <span>👤</span>
+                    </div>
+                </div>
+                <p class="hero-greeting">👋 你好，我是</p>
+                <h1 class="hero-name">
+                    <span class="typewriter" id="typewriter"></span>
+                    <span class="cursor">|</span>
+                </h1>
+                <p class="hero-title">全栈开发工程师 / 开源爱好者</p>
+                <p class="hero-bio">
+                    热衷于构建优雅、高性能的Web应用。<br>
+                    专注于前端工程化与用户体验，3年+项目开发经验。
+                </p>
+                <div class="hero-buttons">
+                    <a href="#projects" class="btn btn-primary">
+                        <span>🔍</span> 查看项目
+                    </a>
+                    <a href="#contact" class="btn btn-outline">
+                        <span>📧</span> 联系我
+                    </a>
+                    <a href="project/resume.doc" class="btn btn-accent" download>
+                        <span>📄</span> 下载简历
+                    </a>
+                </div>
+                <div class="hero-socials">
+                    <a href="https://github.com/XBBDYF" target="_blank" rel="noopener" title="GitHub" class="social-link">🐙 GitHub</a>
+                    <a href="https://qm.qq.com/q/h373baquhq" target="_blank" rel="noopener" title="QQ" class="social-link">💼 QQ</a>
+                    <a href="mailto:lspby@foxmail.com" title="邮箱" class="social-link">📧 邮箱</a>
+                </div>
+            </div>
+            <div class="scroll-indicator">
+                <span>向下滚动</span>
+                <div class="scroll-mouse">
+                    <div class="scroll-wheel"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 关于我 区域 (保留) ========== -->
+        <section id="about" class="about-section">
+            <div class="section-container">
+                <h2 class="section-title">
+                    <span class="section-number">01.</span> 关于我
+                </h2>
+                <div class="about-grid">
+                    <div class="about-text">
+                        <p>
+                            我是一名充满热情的<strong>全栈开发工程师</strong>，
+                            目前专注于使用多种语言开发创新应用。
+                        </p>
+                        <p>
+                            我相信代码不仅是工具，更是创造力的延伸。每一个项目我都力求做到
+                            <em>代码清晰、性能优异、用户体验出色</em>。
+                        </p>
+                        <p>
+                            工作之余，我喜欢探索新技术、写技术博客、参与开源项目，
+                            也会用音乐和摄影来充实生活 🎵📷
+                        </p>
+                        <div class="about-stats">
+                            <div class="stat-item">
+                                <span class="stat-number" data-count="5">0</span>
+                                <span class="stat-label">进行中项目</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" data-count="7000">0</span>
+                                <span class="stat-label">总下载量</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number" data-count="3">0</span>
+                                <span class="stat-label">工作经验(年)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="about-card">
+                        <div class="about-card-inner">
+                            <h3>🎯 求职意向</h3>
+                            <ul>
+                                <li><strong>期望职位：</strong>前端/全栈开发工程师</li>
+                                <li><strong>工作地点：</strong>开放远程/灵活办公</li>
+                                <li><strong>期望薪资：</strong>面议</li>
+                                <li><strong>到岗时间：</strong>随时到岗</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 技能 区域 (保留) ========== -->
+        <section id="skills" class="skills-section">
+            <div class="section-container">
+                <h2 class="section-title">
+                    <span class="section-number">02.</span> 技能专长
+                </h2>
+                <div class="skills-grid">
+                    <div class="skill-category">
+                        <h3>🎨 前端开发</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">HTML5/CSS3</span>
+                            <span class="skill-tag">JavaScript (ES6+)</span>
+                            <span class="skill-tag">React / Vue</span>
+                            <span class="skill-tag">Tailwind CSS</span>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h3>⚙️ 后端 & 工具</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">Python / Node.js</span>
+                            <span class="skill-tag">MySQL / MongoDB</span>
+                            <span class="skill-tag">Git / GitHub</span>
+                            <span class="skill-tag">Docker / Linux</span>
+                        </div>
+                    </div>
+                    <div class="skill-category">
+                        <h3>🛠️ 其他能力</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">C/C++ / C#</span>
+                            <span class="skill-tag">Godot / Unity</span>
+                            <span class="skill-tag">UI/UX 设计</span>
+                            <span class="skill-tag">Figma / PR</span>
+                            <span class="skill-tag">技术文档</span>
+                            <span class="skill-tag">团队协作</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 项目展示 区域 (施工中 ♪ 锤子动画) ========== -->
+        <section id="projects" class="projects-section">
+            <div class="section-container">
+                <h2 class="section-title">
+                    <span class="section-number">03.</span> 项目展示
+                </h2>
+                <!-- 施工中模块：锤子敲打动画替代原有项目卡片及筛选器 -->
+                <div class="construction-block">
+                    <div class="hammer-area">
+                        <div class="hammer-icon">🔨</div>
+                        <div class="spark spark-1"></div>
+                        <div class="spark spark-2"></div>
+                        <div class="spark spark-3"></div>
+                    </div>
+                    <div class="construction-title">🚧 施工敲敲中 🚧</div>
+                    <div class="construction-text">
+                        项目作品集正在精心打磨，<br>
+                        优秀案例即将闪亮登场，敬请期待！
+                    </div>
+                    <div class="construction-badge">
+                        ⚡ 全新作品即将来袭 ⚡
+                    </div>
+                </div>
+                <!-- 隐藏原本的项目筛选和卡片网格 (避免显示旧内容) -->
+                <div style="display: none;">
+                    <div class="project-filters" id="projectFilters"></div>
+                    <div class="projects-grid" id="projectsGrid"></div>
+                    <p class="no-projects-msg" id="noProjectsMsg"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== 联系我 区域 (完全施工中，锤子动画 + 期待提示) ========== -->
+        <section id="contact" class="contact-section">
+            <div class="section-container">
+                <h2 class="section-title">
+                    <span class="section-number">04.</span> 联系我
+                </h2>
+                <!-- 原本的联系卡片和表单全部替换为富有动态的施工模块，同时提示“期待与您联系”正在搭建 -->
+                <div class="construction-block contact-construction" style="padding: 2.5rem 2rem;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
+                        <span class="inline-hammer">🔨</span>
+                        <span class="inline-hammer" style="animation-delay: 0.2s;">🛠️</span>
+                        <span class="inline-hammer" style="animation-delay: 0.4s;">🔧</span>
+                    </div>
+                    <div class="construction-title" style="margin-top: 0.5rem;">
+                        📬 期待与您联系 · 施工中
+                    </div>
+                    <div class="construction-text" style="max-width: 500px;">
+                        个人联系方式与留言系统正在全新升级！<br>
+                        您可以通过下方备用邮箱或GitHub与我沟通，正式开放后第一时间回复。
+                    </div>
+                    <div style="margin: 1.2rem 0 0.5rem;">
+                        <div class="contact-item" style="justify-content: center; gap: 0.8rem;">
+                            <span class="contact-icon">📧</span>
+                            <span>lspby@foxmail.com (备用)</span>
+                        </div>
+                        <div class="contact-item" style="justify-content: center; gap: 0.8rem;">
+                            <span class="contact-icon">🐙</span>
+                            <span>github.com/XBBDYF</span>
+                        </div>
+                    </div>
+                    <div class="construction-badge">
+                        ✨ 联系功能暂未开放，感谢理解 ✨
+                    </div>
+                    <!-- 提示原本表单已替换，不再显示 -->
+                </div>
+                <!-- 隐藏原本的联系表单等内容 -->
+                <div style="display: none;">
+                    <div class="contact-grid">
+                        <div class="contact-info"></div>
+                        <form class="contact-form"></form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== 页脚 ==================== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <p>© 2025 MyPortfolio. 用 ❤️ 和 ☕ 构建.</p>
+            <p class="footer-sub">All rights reserved. | 求职作品集 · 施工中</p>
+            <div class="footer-links">
+                <a href="#home">首页</a>
+                <a href="#projects">项目</a>
+                <a href="#contact">联系</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== 音乐播放器（悬浮组件） ==================== -->
+    <button class="music-fab" id="musicFab" aria-label="打开音乐播放器" title="音乐播放器">
+        <span class="music-fab-icon">🎵</span>
+        <span class="music-fab-pulse"></span>
+    </button>
+
+    <div class="music-player" id="musicPlayer">
+        <div class="music-player-header">
+            <h4>🎧 音乐播放器</h4>
+            <button class="music-player-close" id="musicPlayerClose" aria-label="关闭播放器">✕</button>
+        </div>
+        <div class="music-visualizer" id="musicVisualizer">
+            <div class="visualizer-bars" id="visualizerBars">
+                <span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span>
+                <span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span>
+                <span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span>
+                <span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span>
+                <span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span>
+                <span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span>
+            </div>
+            <div class="now-playing-info">
+                <span class="now-playing-title" id="nowPlayingTitle">未选择歌曲</span>
+                <span class="now-playing-artist" id="nowPlayingArtist">点击下方列表播放</span>
+            </div>
+        </div>
+        <div class="music-progress-container">
+            <span class="music-time" id="currentTime">00:00</span>
+            <div class="music-progress-bar" id="musicProgressBar">
+                <div class="music-progress-fill" id="musicProgressFill"></div>
+                <div class="music-progress-thumb" id="musicProgressThumb"></div>
+            </div>
+            <span class="music-time" id="totalTime">00:00</span>
+        </div>
+        <div class="music-controls">
+            <button class="music-ctrl-btn" id="btnShuffle" title="随机播放" aria-label="随机播放">🔀</button>
+            <button class="music-ctrl-btn" id="btnPrev" title="上一首" aria-label="上一首">⏮️</button>
+            <button class="music-ctrl-btn music-ctrl-play" id="btnPlay" title="播放/暂停" aria-label="播放暂停">
+                <span id="btnPlayIcon">▶️</span>
+            </button>
+            <button class="music-ctrl-btn" id="btnNext" title="下一首" aria-label="下一首">⏭️</button>
+            <button class="music-ctrl-btn" id="btnLoop" title="循环模式" aria-label="循环模式">🔁</button>
+        </div>
+        <div class="music-volume">
+            <span>🔈</span>
+            <input type="range" class="music-volume-slider" id="musicVolumeSlider" min="0" max="100" value="70" aria-label="音量">
+            <span>🔊</span>
+        </div>
+        <div class="music-playlist" id="musicPlaylist"></div>
+    </div>
+
+    <button class="back-to-top" id="backToTop" aria-label="回到顶部" title="回到顶部">
+        ⬆️
+    </button>
+
+    <script src="js/main.js"></script>
+    <script>
+        // 为保证原有main.js不会因为缺失旧元素报错，做额外兼容处理，同时保留锤子动画
+        // 注意main.js里面部分针对项目筛选和联系表单的事件监听，因为元素已经替换为施工模块，需避免报错。
+        // 以下脚本用于覆盖原有的筛选/表单监听，使其失效或优雅跳过。
+        (function safeOverride() {
+            // 等待原有JS执行完毕后，修正可能存在的报错（由于元素被替换，事件监听器可能报错）
+            // 但是由于main.js中可能存在获取元素并添加事件，我们重新确保关键检查。
+            window.addEventListener('load', () => {
+                // 避免项目筛选报错 (因projectFilters已经被隐藏)
+                if (typeof window.fixMissingElements === 'undefined') {
+                    // 额外防止联系表单提交报错
+                    const fakeForm = document.getElementById('contactForm');
+                    if (fakeForm) {
+                        // 如果原表单被隐藏但仍然存在(本HTML中已经隐藏但为了绝对安全)
+                        fakeForm.addEventListener('submit', (e) => {
+                            e.preventDefault();
+                            alert('📢 联系功能正在施工中，暂时无法提交留言。敬请期待！');
+                        });
+                    }
+                    // 禁止原本的项目筛选按钮可能引用的空指针
+                    const filterContainer = document.getElementById('projectFilters');
+                    if (filterContainer) {
+                        // 移除可能造成错误的监听 (无实际作用)
+                        filterContainer.innerHTML = '';
+                    }
+                }
+            });
+        })();
+    </script>
+    <!-- 注意：main.js内原有的粒子背景，导航栏交互，打字机，数字递增，音乐播放器不受影响，
+         因施工替换了项目区域和联系区域，但无关其他功能，音乐播放器依旧完美工作。-->
+</body>
+</html>

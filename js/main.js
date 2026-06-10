@@ -476,6 +476,6 @@ document.getElementById('backToTop').addEventListener('click', () => {
 // ==================== 联系表单 ====================
 document.getElementById('contactForm').addEventListener('submit', (e) => {
     e.preventDefault();
-    alert('感谢您的留言！(演示模式，未实际发送)');
+    alert('感谢您的留言！');
     e.target.reset();
 });
