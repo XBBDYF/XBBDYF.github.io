@@ -1,8 +1,8 @@
 const playlist = [
-    { title: 'Montagem pitty', artist: '见过夏天P/洛天依', src: 'https://m701.music.126.net/20260611010702/88ebb95a4dea383403ae550fc21cd532/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/78836438796/af82/828d/c0e5/0f114dda22328c5aa6de7d46c0c3442c.mp3?vuutv=DUwr7Ps/r3x6M6GF1rShktswm2ET2Z3hLaIWPKTsKY/FwSjzfTjRWAas/2tJkj0vSrWMyc8lZzcjVmIe4f/SbUZuJwHLgHeFnIWxd1KDzrc=' },
-    { title: 'Oh! Susanna', artist: '2nd South Carolina String Band', src: 'https://m7.music.126.net/20260611011122/1ccc7bd0bb5eb2c7c7982ec3e84f07a9/ymusic/555b/510c/560b/b17d5bc316ff6e45a715aa20f26e25d5.mp3?vuutv=yqBqYZft/Vfg11tTtH1OAuPoZu+Er0/VXHg0N+jZnCUZUPLZlnpdiJFOT9AQAEyyKvDVqVVGEXHDXiF+DvKiA39vpeJvqRdftTaqxLBIosg=' },
-    { title: '心予報', artist: 'Eve', src: 'https://m702.music.126.net/20260611011333/febd10b68eeebb40cbef7a829897a915/jd-musicrep-ts/6ce4/46b6/d062/fd7711a35cf54a4e482eba68a7d59810.mp3?vuutv=47ZSB11NpeMJNdmaxV/A8uTyKJ3KUSfEqyacDmRNizKDzIm0GM2Nbfx6X374hk4EcmFpjxhC/WMzC7kZ2xsVeEnXdlU9lC8BR/kYZJIrSM8=' },
-    { title: '天天天国地獄国 (feat. ななひら & P丸様。)', artist: 'Aiobahn +81/ななひら/P丸様。', src: 'https://m802.music.126.net/20260611014848/bec7018f2ef665713ccffaf11de0d107/jd-musicrep-ts/9f41/6b4b/c1ee/a509d2c5c9eed132b356e2826d669e3a.mp3?vuutv=qGCq14rpH330GebgIblBpFiZjLAVzN1Bw7DliW1fgQVCV63eb5PcabsEdZ0ULxKSKHSjs6f2Hdmp/ULWP4DlAAH97Cgd/gTWJsIm/4EdmvQ=' }
+    { title: 'Montagem pitty', artist: '见过夏天P/洛天依', src: '../music/Montagem pitty.mp3' },
+    { title: 'Oh! Susanna', artist: '2nd South Carolina String Band', src: '../music/Oh! Susanna.mp3' },
+    { title: '心予報', artist: 'Eve', src: '../music/心予報.mp3' },
+    { title: '天天天国地獄国 (feat. ななひら & P丸様。)', artist: 'Aiobahn +81/ななひら/P丸様。', src: '../music/天天天国地獄国 (feat. ななひら & P丸様。).mp3' }
 ];
 let currentTrackIndex = 0, isPlaying = false, isShuffle = false, loopMode = 'none'; // 'none', 'one', 'all'
 const audio = new Audio();
