@@ -10,172 +10,6 @@
     <!-- 网站图标 (可替换为自己的favicon) -->
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
-    <style>
-        /* ========== 施工中专用样式 (锤子敲击动画) ========== */
-        .construction-block {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 3rem 2rem;
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            border-radius: 40px;
-            border: 1px solid var(--card-border);
-            box-shadow: var(--shadow);
-            margin: 1rem 0;
-        }
-
-        .hammer-area {
-            margin-bottom: 1.5rem;
-            position: relative;
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .hammer-icon {
-            font-size: 5rem;
-            display: inline-block;
-            animation: hammerHit 0.6s infinite ease-in-out;
-            transform-origin: top center;
-            cursor: default;
-            filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.2));
-        }
-
-        /* 辅助敲击小火花 */
-        .spark {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: #fbbf24;
-            border-radius: 50%;
-            opacity: 0;
-            animation: sparkFlash 0.6s infinite;
-        }
-
-        .spark-1 {
-            top: 20%;
-            right: 10%;
-            animation-delay: 0s;
-        }
-
-        .spark-2 {
-            bottom: 30%;
-            left: 5%;
-            animation-delay: 0.15s;
-        }
-
-        .spark-3 {
-            top: 50%;
-            right: 0%;
-            animation-delay: 0.3s;
-        }
-
-        @keyframes hammerHit {
-            0% {
-                transform: rotate(0deg) translateY(0);
-            }
-
-            25% {
-                transform: rotate(-25deg) translateY(-5px);
-            }
-
-            50% {
-                transform: rotate(5deg) translateY(2px);
-            }
-
-            75% {
-                transform: rotate(-15deg) translateY(-2px);
-            }
-
-            100% {
-                transform: rotate(0deg) translateY(0);
-            }
-        }
-
-        @keyframes sparkFlash {
-            0% {
-                opacity: 0;
-                transform: scale(0.5);
-            }
-
-            20% {
-                opacity: 1;
-                transform: scale(1.2);
-                background: #ffb347;
-            }
-
-            100% {
-                opacity: 0;
-                transform: scale(0);
-            }
-        }
-
-        .construction-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent), #f59e0b);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            margin: 0.8rem 0 0.5rem;
-        }
-
-        .construction-text {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            max-width: 400px;
-            margin: 0 auto;
-            line-height: 1.5;
-        }
-
-        .construction-badge {
-            background: var(--accent-glow);
-            color: var(--accent);
-            padding: 0.3rem 1rem;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-block;
-            margin-top: 1rem;
-        }
-
-        /* 针对联系区域保留温馨提示背景 */
-        .contact-construction {
-            width: 100%;
-        }
-
-        .inline-hammer {
-            font-size: 2rem;
-            display: inline-block;
-            animation: hammerHit 0.8s infinite ease;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-
-        .contact-info.construction-mode {
-            justify-content: center;
-            text-align: center;
-        }
-
-        /* 覆盖原来联系区域布局，让施工块更突出 */
-        .contact-grid .construction-block {
-            grid-column: span 2;
-            width: 100%;
-        }
-
-        @media (max-width: 768px) {
-            .construction-title {
-                font-size: 1.4rem;
-            }
-
-            .hammer-icon {
-                font-size: 3.8rem;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -367,44 +201,161 @@
                 <h2 class="section-title">
                     <span class="section-number">03.</span> 项目展示
                 </h2>
-                <!-- 施工中模块：锤子敲打动画替代原有项目卡片及筛选器 -->
-                <div class="construction-block">
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap;">
+                <!-- 项目筛选按钮 -->
+                <div class="project-filters" id="projectFilters">
+                    <button class="filter-btn active" data-filter="all">全部</button>
+                    <button class="filter-btn" data-filter="web">Web应用</button>
+                    <button class="filter-btn" data-filter="mobile">移动端</button>
+                    <button class="filter-btn" data-filter="tool">工具</button>
+                    <button class="filter-btn" data-filter="opensource">开源</button>
+                </div>
+                <!-- 项目卡片网格 -->
+                <div class="projects-grid" id="projectsGrid">
 
-                        <div class="hammer-area">
-                            <span class="inline-hammer">🔨</span>
-                            <div class="spark spark-1"></div>
-                            <div class="spark spark-2"></div>
-                            <div class="spark spark-3"></div>
+                    <!-- ====== 项目卡片 1 ====== -->
+                    <div class="project-card" data-category="web opensource">
+                        <div class="project-image-wrapper">
+                            <img src="img/project1.png" alt="IRIS九色堇之星" class="project-image"
+                                onerror="this.style.display='none';this.parentElement.querySelector('.project-image-fallback').style.display='flex';">
+                            <div class="project-image-fallback" style="display:none;">
+                                <span>🛒</span><small>项目预览图</small>
+                            </div>
+                            <div class="project-overlay">
+                                <span class="project-overlay-text">查看详情</span>
+                            </div>
                         </div>
-                        <div class="hammer-area">
-                            <span class="inline-hammer" style="animation-delay: 0.2s;">🛠️</span>
-                            <div class="spark spark-1"></div>
-                            <div class="spark spark-2"></div>
-                            <div class="spark spark-3"></div>
-                        </div>
-                        <div class="hammer-area">
-                            <span class="inline-hammer" style="animation-delay: 0.4s;">🔧</span>
-                            <div class="spark spark-1"></div>
-                            <div class="spark spark-2"></div>
-                            <div class="spark spark-3"></div>
+                        <div class="project-info">
+                            <h3 class="project-title">IRIS九色堇之星</h3>
+                            <p class="project-description">
+                                基于React + Node.js构建的完整电商解决方案，支持商品管理、购物车、
+                                支付集成（Stripe）和订单追踪，月活用户2000+。
+                            </p>
+                            <div class="project-tech-tags">
+                                <span>React</span><span>Node.js</span><span>MongoDB</span><span>Stripe</span>
+                            </div>
+                            <div class="project-links">
+                                <!-- ★ 项目文件下载：请将打包文件放在 project/project1.zip -->
+                                <a href="project/project1.zip" class="btn btn-sm btn-primary" download>
+                                    ⬇️ 下载项目
+                                </a>
+                                <a href="#" class="btn btn-sm btn-outline" target="_blank" rel="noopener">
+                                    🔗 在线演示
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div class="construction-title">🚧 施工敲敲中 🚧</div>
-                    <div class="construction-text">
-                        项目作品集正在精心打磨，<br>
-                        优秀案例即将闪亮登场，敬请期待！
+                    <!-- ====== 项目卡片 1 结束 ====== -->
+
+                    <!-- ====== 项目卡片 2 ====== -->
+                    <div class="project-card" data-category="mobile tool">
+                        <div class="project-image-wrapper">
+                            <!-- ★ 项目展示图：请将图片放在 img/project2.jpg -->
+                            <img src="img/project2.jpg" alt="天气App" class="project-image"
+                                onerror="this.style.display='none';this.parentElement.querySelector('.project-image-fallback').style.display='flex';">
+                            <div class="project-image-fallback" style="display:none;">
+                                <span>🌤️</span><small>项目预览图</small>
+                            </div>
+                            <div class="project-overlay">
+                                <span class="project-overlay-text">查看详情</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3 class="project-title">智能天气App</h3>
+                            <p class="project-description">
+                                使用Flutter开发的跨平台天气应用，集成多个天气API，
+                                支持实时天气、7天预报、空气质量指数和精美动画。
+                            </p>
+                            <div class="project-tech-tags">
+                                <span>Flutter</span><span>Dart</span><span>REST API</span><span>Firebase</span>
+                            </div>
+                            <div class="project-links">
+                                <!-- ★ 项目文件下载：请将打包文件放在 project/project2.zip -->
+                                <a href="project/project2.zip" class="btn btn-sm btn-primary" download>
+                                    ⬇️ 下载项目
+                                </a>
+                                <a href="#" class="btn btn-sm btn-outline" target="_blank" rel="noopener">
+                                    🔗 在线演示
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="construction-badge">
-                        ⚡ 全新作品即将来袭 ⚡
+                    <!-- ====== 项目卡片 2 结束 ====== -->
+
+                    <!-- ====== 项目卡片 3 ====== -->
+                    <div class="project-card" data-category="web tool opensource">
+                        <div class="project-image-wrapper">
+                            <!-- ★ 项目展示图：请将图片放在 img/project3.jpg -->
+                            <img src="img/project3.jpg" alt="代码生成器" class="project-image"
+                                onerror="this.style.display='none';this.parentElement.querySelector('.project-image-fallback').style.display='flex';">
+                            <div class="project-image-fallback" style="display:none;">
+                                <span>⚡</span><small>项目预览图</small>
+                            </div>
+                            <div class="project-overlay">
+                                <span class="project-overlay-text">查看详情</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3 class="project-title">AI代码生成器</h3>
+                            <p class="project-description">
+                                基于GPT API的智能代码生成工具，支持多种语言，
+                                可根据自然语言描述生成可运行代码，GitHub 500+ Star。
+                            </p>
+                            <div class="project-tech-tags">
+                                <span>Python</span><span>FastAPI</span><span>OpenAI</span><span>Docker</span>
+                            </div>
+                            <div class="project-links">
+                                <!-- ★ 项目文件下载：请将打包文件放在 project/project3.zip -->
+                                <a href="project/project3.zip" class="btn btn-sm btn-primary" download>
+                                    ⬇️ 下载项目
+                                </a>
+                                <a href="#" class="btn btn-sm btn-outline" target="_blank" rel="noopener">
+                                    🔗 在线演示
+                                </a>
+                            </div>
+                        </div>
                     </div>
+                    <!-- ====== 项目卡片 3 结束 ====== -->
+
+                    <!-- ====== 项目卡片 4 ====== (示例：可自行复制添加更多) -->
+                    <div class="project-card" data-category="web mobile">
+                        <div class="project-image-wrapper">
+                            <!-- ★ 项目展示图：请将图片放在 img/project4.jpg -->
+                            <img src="img/project4.jpg" alt="任务管理面板" class="project-image"
+                                onerror="this.style.display='none';this.parentElement.querySelector('.project-image-fallback').style.display='flex';">
+                            <div class="project-image-fallback" style="display:none;">
+                                <span>📋</span><small>项目预览图</small>
+                            </div>
+                            <div class="project-overlay">
+                                <span class="project-overlay-text">查看详情</span>
+                            </div>
+                        </div>
+                        <div class="project-info">
+                            <h3 class="project-title">任务管理看板</h3>
+                            <p class="project-description">
+                                类似Trello的拖拽式任务管理工具，支持团队协作、
+                                实时同步、甘特图视图，提升团队效率。
+                            </p>
+                            <div class="project-tech-tags">
+                                <span>Vue.js</span><span>Firebase</span><span>Drag&Drop API</span><span>PWA</span>
+                            </div>
+                            <div class="project-links">
+                                <!-- ★ 项目文件下载：请将打包文件放在 project/project4.zip -->
+                                <a href="project/project4.zip" class="btn btn-sm btn-primary" download>
+                                    ⬇️ 下载项目
+                                </a>
+                                <a href="#" class="btn btn-sm btn-outline" target="_blank" rel="noopener">
+                                    🔗 在线演示
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ====== 项目卡片 4 结束 ====== -->
+
                 </div>
-                <!-- 隐藏原本的项目筛选和卡片网格 (避免显示旧内容) -->
-                <div style="display: none;">
-                    <div class="project-filters" id="projectFilters"></div>
-                    <div class="projects-grid" id="projectsGrid"></div>
-                    <p class="no-projects-msg" id="noProjectsMsg"></p>
-                </div>
+                <!-- 无匹配项目提示 -->
+                <p class="no-projects-msg" id="noProjectsMsg" style="display:none;">
+                    📭 该分类下暂无项目，请查看其他分类
+                </p>
             </div>
         </section>
 
