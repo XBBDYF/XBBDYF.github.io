@@ -1,0 +1,17 @@
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes blink { 0%,100%{ opacity: 1; } 50%{ opacity: 0; } }
+@keyframes scrollWheel { 0% { opacity: 1; transform: translateX(-50%) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) translateY(15px); } }
+@keyframes pulse { 0% { transform: scale(0.9); opacity: 0.7; } 100% { transform: scale(1.2); opacity: 0; } }
+/* 锤子敲击 */
+.hammer-icon { font-size: 2.5rem; display: inline-block; animation: hammerHit 0.6s infinite ease-in-out; transform-origin: top center; filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.2)); }
+@keyframes hammerHit { 0% { transform: rotate(0deg) translateY(0); } 25% { transform: rotate(-25deg) translateY(-5px); } 50% { transform: rotate(5deg) translateY(2px); } 75% { transform: rotate(-15deg) translateY(-2px); } 100% { transform: rotate(0deg) translateY(0); } }
+.spark { position: absolute; width: 8px; height: 8px; background: #fbbf24; border-radius: 50%; opacity: 0; animation: sparkFlash 0.6s infinite; }
+.spark-1 { top: 20%; right: 10%; } .spark-2 { bottom: 30%; left: 5%; animation-delay: 0.15s; } .spark-3 { top: 50%; right: 0%; animation-delay: 0.3s; }
+@keyframes sparkFlash { 0% { opacity: 0; transform: scale(0.5); } 20% { opacity: 1; transform: scale(1.2); background: #ffb347; } 100% { opacity: 0; transform: scale(0); } }
+.hammer-area { position: relative; display: inline-block; margin: 0 0.2rem; }
+.construction-block { text-align: center; background: var(--card-bg); backdrop-filter: blur(12px); border-radius: 40px; padding: 3rem 2rem; border: 1px solid var(--card-border); }
+.construction-title { font-size: 1.8rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), #f59e0b); background-clip: text; -webkit-background-clip: text; color: transparent; }
+/* 简历按钮抖动动画 */
+.btn-locked.shake-animation { animation: shakeLock 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+@keyframes shakeLock { 0% { transform: translateX(0); } 20% { transform: translateX(-5px); } 40% { transform: translateX(5px); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } 100% { transform: translateX(0); } }

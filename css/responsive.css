@@ -1,0 +1,12 @@
+@media (max-width: 768px) {
+    .nav-links { position: fixed; top: 0; right: -100%; height: 100vh; width: 75%; background: var(--card-bg); backdrop-filter: blur(20px); flex-direction: column; justify-content: center; gap: 2rem; transition: right 0.3s ease; }
+    .nav-links.active { right: 0; }
+    .hamburger { display: flex; }
+    .hero-name { font-size: 2.2rem; }
+    .about-grid, .contact-grid { grid-template-columns: 1fr; }
+    .music-player { width: 90vw; right: 5vw; bottom: 90px; }
+    .back-to-top { right: 20px; bottom: 80px; }
+    section { padding: 3rem 0; }
+    .section-title { font-size: 1.6rem; }
+    .construction-title { font-size: 1.4rem; }
+}
