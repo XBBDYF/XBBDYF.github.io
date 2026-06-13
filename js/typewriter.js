@@ -1,5 +1,5 @@
 const typewriterEl = document.getElementById('typewriter');
-const texts = ['洗不白de衣服', '一个小菜鸟', '一个开发者', '一个学习者'];
+const texts = ['洗不白de衣服', '一个小菜鸟', '一个开发者', '一个学习者', '我不知道写什么了……', '你还在看什么？', '别这么无聊了……', '看看其他的吧……', '…………', '别看了……', '真没了……'];
 let textIndex = 0, charIndex = 0, isDeleting = false, typeSpeed = 100;
 function typeWriter() {
     const currentText = texts[textIndex];
