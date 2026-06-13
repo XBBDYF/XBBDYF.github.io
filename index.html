@@ -1,30 +1,39 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>我的作品集 - 个人博客</title>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- 可选代码高亮 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <!-- 拆分后的CSS -->
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/music-player.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/responsive.css">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚀%3C/text%3E%3C/svg%3E">
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚀%3C/text%3E%3C/svg%3E">
 </head>
+
 <body>
     <canvas id="particleCanvas" aria-hidden="true"></canvas>
 
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <a href="#home" class="nav-logo"><span class="logo-bracket">{</span><span class="logo-text">MyPortfolio</span><span class="logo-bracket">}</span></a>
+            <a href="#home" class="nav-logo"><span class="logo-bracket">{</span><span
+                    class="logo-text">MyPortfolio</span><span class="logo-bracket">}</span></a>
             <ul class="nav-links" id="navLinks">
                 <li><a href="#home" class="nav-link active">首页</a></li>
                 <li><a href="#about" class="nav-link">关于我</a></li>
                 <li><a href="#skills" class="nav-link">技能</a></li>
                 <li><a href="#projects" class="nav-link">项目</a></li>
+                <li><a href="#blog" class="nav-link" id="blogNavLink">文章</a></li>
                 <li><a href="#contact" class="nav-link">联系我</a></li>
             </ul>
             <button class="theme-toggle" id="themeToggle"><span class="theme-icon">🌙</span></button>
@@ -40,26 +49,35 @@
             <div class="hero-content">
                 <div class="hero-avatar-wrapper">
                     <div class="hero-avatar-ring"></div>
-                    <img src="tx.png" alt="头像" class="hero-avatar" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                    <img src="tx.png" alt="头像" class="hero-avatar"
+                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
                     <div class="hero-avatar-fallback" style="display:none;"><span>👤</span></div>
                 </div>
                 <p class="hero-greeting">👋 你好，我是</p>
                 <h1 class="hero-name"><span class="typewriter" id="typewriter"></span><span class="cursor">|</span></h1>
-                <p class="hero-title">全栈开发工程师 / 开源爱好者</p>
-                <p class="hero-bio">热衷于构建优雅、高性能的Web应用。<br>专注于前端工程化与用户体验，3年+项目开发经验。</p>
+                <p class="hero-title">正在学习的程序员 / MOD编辑者</p>
+                <p class="hero-bio">热衷于编写H5网页程序与一些小项目<br>以编写3年+钢铁雄心4MOD</p>
                 <div class="hero-buttons">
                     <a href="#projects" class="btn btn-primary"><i class="fas fa-search"></i> 查看项目</a>
                     <a href="#contact" class="btn btn-outline"><i class="fas fa-envelope"></i> 联系我</a>
-                    <a href="javascript:void(0);" class="btn btn-locked" id="lockedResumeBtn"><i class="fas fa-lock"></i> 下载简历</a>
+                    <a href="javascript:void(0);" class="btn btn-locked" id="lockedResumeBtn"><i
+                            class="fas fa-lock"></i> 下载简历</a>
                 </div>
                 <div class="hero-socials">
-                    <a href="https://github.com/XBBDYF" target="_blank" class="social-link"><i class="fab fa-github"></i> GitHub</a>
-                    <a href="https://qm.qq.com/q/h373baquhq" target="_blank" class="social-link"><i class="fab fa-qq"></i> QQ</a>
+                    <a href="https://github.com/XBBDYF" target="_blank" class="social-link"><i
+                            class="fab fa-github"></i> GitHub</a>
+                    <a href="https://qm.qq.com/q/h373baquhq" target="_blank" class="social-link"><i
+                            class="fab fa-qq"></i> QQ</a>
                     <a href="mailto:lspby@foxmail.com" class="social-link"><i class="fas fa-envelope"></i> 邮箱</a>
                 </div>
             </div>
-            <div class="scroll-indicator"><span>向下滚动</span><div class="scroll-mouse"><div class="scroll-wheel"></div></div></div>
+            <div class="scroll-indicator"><span>向下滚动</span>
+                <div class="scroll-mouse">
+                    <div class="scroll-wheel"></div>
+                </div>
+            </div>
         </section>
+
 
         <!-- 关于我 -->
         <section id="about" class="about-section">
@@ -67,16 +85,29 @@
                 <h2 class="section-title"><span class="section-number">01.</span> 关于我</h2>
                 <div class="about-grid">
                     <div class="about-text">
-                        <p>我是一名充满热情的<strong>全栈开发工程师</strong>，目前专注于使用P语言开发游戏。</p>
-                        <p>我相信代码不仅是工具，更是创造力的延伸。每一个项目我都力求做到<em>代码清晰、性能优异、用户体验出色</em>。</p>
-                        <p>工作之余，我喜欢探索新技术、写技术博客、参与开源项目，也会用音乐和摄影来充实生活 🎵📷</p>
+                        <p>我是一名充满“热情的”<strong>代码学习者</strong>，近期正在学习C/C++程序编写。</p>
+                        <p>我喜欢制作游戏MOD<em>钢铁雄心4、PVZ2等</em>。</p>
+                        <p>编写之余，我喜欢听音乐与研究洋垃圾与老物件。</p>
                         <div class="about-stats">
-                            <div class="stat-item"><span class="stat-number" data-count="2">0</span><span class="stat-label">完成项目</span></div>
-                            <div class="stat-item"><span class="stat-number" data-count="7000">0</span><span class="stat-label">总下载量</span></div>
-                            <div class="stat-item"><span class="stat-number" data-count="3">0</span><span class="stat-label">工作经验(年)</span></div>
+                            <div class="stat-item"><span class="stat-number" data-count="2">0</span><span
+                                    class="stat-label">完成项目</span></div>
+                            <div class="stat-item"><span class="stat-number" data-count="7000">0</span><span
+                                    class="stat-label">总下载量</span></div>
+                            <div class="stat-item"><span class="stat-number" data-count="3">0</span><span
+                                    class="stat-label">工作经验(年)</span></div>
                         </div>
                     </div>
-                    <div class="about-card"><div class="about-card-inner"><h3>🎯 求职意向</h3><ul><li><strong>期望职位：</strong>前端/全栈开发工程师</li><li><strong>工作地点：</strong>开放远程/灵活办公</li><li><strong>期望薪资：</strong>面议</li><li><strong>到岗时间：</strong>随时到岗</li></ul></div></div>
+                    <!-- <div class="about-card">
+                        <div class="about-card-inner">
+                            <h3>🎯 求职意向</h3>
+                            <ul>
+                                <li><strong>期望职位：</strong>前端/全栈开发工程师</li>
+                                <li><strong>工作地点：</strong>开放远程/灵活办公</li>
+                                <li><strong>期望薪资：</strong>面议</li>
+                                <li><strong>到岗时间：</strong>随时到岗</li>
+                            </ul>
+                        </div>
+                    </div> -->
                 </div>
             </div>
         </section>
@@ -86,27 +117,67 @@
             <div class="section-container">
                 <h2 class="section-title"><span class="section-number">02.</span> 技能专长</h2>
                 <div class="skills-grid">
-                    <div class="skill-category"><h3>🎨 前端开发</h3><div class="skill-tags"><span class="skill-tag">HTML5</span><span class="skill-tag">CSS3 / Sass</span><span class="skill-tag">JavaScript (ES6+)</span><span class="skill-tag">Tailwind CSS</span></div></div>
-                    <div class="skill-category"><h3>⚙️ 后端 & 工具</h3><div class="skill-tags"><span class="skill-tag">Python</span><span class="skill-tag">MySQL / MongoDB</span><span class="skill-tag">Git / GitHub</span><span class="skill-tag">Linux</span></div></div>
-                    <div class="skill-category"><h3>🛠️ 其他能力</h3><div class="skill-tags"><span class="skill-tag">C/C++</span><span class="skill-tag">C#</span><span class="skill-tag">GDScrip</span><span class="skill-tag">Premiere Pro (PR)</span><span class="skill-tag">UI/UX 设计</span></div></div>
+                    <div class="skill-category">
+                        <h3>🎨 前端开发</h3>
+                        <div class="skill-tags"><span class="skill-tag">HTML5</span><span class="skill-tag">CSS3 /
+                                Sass</span><span class="skill-tag">JavaScript (ES6+)</span><span
+                                class="skill-tag">Tailwind CSS</span></div>
+                    </div>
+                    <div class="skill-category">
+                        <h3>⚙️ 后端 & 工具</h3>
+                        <div class="skill-tags"><span class="skill-tag">Python</span><span class="skill-tag">MySQL /
+                                MongoDB</span><span class="skill-tag">Git / GitHub</span><span
+                                class="skill-tag">Linux</span></div>
+                    </div>
+                    <div class="skill-category">
+                        <h3>🛠️ 其他能力</h3>
+                        <div class="skill-tags"><span class="skill-tag">C/C++</span><span
+                                class="skill-tag">C#</span><span class="skill-tag">GDScrip</span><span
+                                class="skill-tag">Premiere Pro (PR)</span><span class="skill-tag">UI/UX 设计</span></div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- 项目施工中 -->
+        <!-- ========== 项目展示 区域 (施工中 ♪ 锤子动画) ========== -->
         <section id="projects" class="projects-section">
             <div class="section-container">
-                <h2 class="section-title"><span class="section-number">03.</span> 项目展示</h2>
+                <h2 class="section-title">
+                    <span class="section-number">03.</span> 项目展示
+                </h2>
+                <!-- 施工中模块：锤子敲打动画替代原有项目卡片及筛选器 -->
                 <div class="construction-block">
-                    <div class="hammer-group">
-                        <div class="hammer-area"><span class="hammer-icon">🔨</span><div class="spark spark-1"></div><div class="spark spark-2"></div><div class="spark spark-3"></div></div>
-                        <div class="hammer-area"><span class="hammer-icon" style="animation-delay: 0.2s;">🛠️</span><div class="spark spark-1"></div><div class="spark spark-2"></div><div class="spark spark-3"></div></div>
-                        <div class="hammer-area"><span class="hammer-icon" style="animation-delay: 0.4s;">🔧</span><div class="spark spark-1"></div><div class="spark spark-2"></div><div class="spark spark-3"></div></div>
+                    <div class="hammer-area">
+                        <div class="hammer-icon">🔨</div>
+                        <div class="spark spark-1"></div>
+                        <div class="spark spark-2"></div>
+                        <div class="spark spark-3"></div>
                     </div>
                     <div class="construction-title">🚧 施工敲敲中 🚧</div>
-                    <div class="construction-text">项目作品集正在精心打磨，<br>优秀案例即将闪亮登场，敬请期待！</div>
-                    <div class="construction-badge">⚡ 全新作品即将来袭 ⚡</div>
+                    <div class="construction-text">
+                        项目作品集正在精心打磨，<br>
+                        优秀案例即将闪亮登场，敬请期待！
+                    </div>
+                    <div class="construction-badge">
+                        ⚡ 全新作品即将来袭 ⚡
+                    </div>
                 </div>
+                <!-- 隐藏原本的项目筛选和卡片网格 (避免显示旧内容) -->
+                <div style="display: none;">
+                    <div class="project-filters" id="projectFilters"></div>
+                    <div class="projects-grid" id="projectsGrid"></div>
+                    <p class="no-projects-msg" id="noProjectsMsg"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 文章板块 -->
+        <section id="blog" class="blog-section">
+            <div class="section-container">
+                <h2 class="section-title">
+                    <span class="section-number">05.</span> 文章
+                </h2>
+                <div id="blogContainer"></div> <!-- 动态内容将渲染在这里 -->
             </div>
         </section>
 
@@ -115,10 +186,17 @@
             <div class="section-container">
                 <h2 class="section-title"><span class="section-number">04.</span> 联系我</h2>
                 <div class="contact-grid">
-                    <div class="contact-info"><h3>📬 期待与您联系</h3><p>如果您对我的项目感兴趣，或者有合适的工作机会，欢迎随时与我取得联系。我会尽快回复！</p>
-                        <div class="contact-details"><div class="contact-item"><i class="fas fa-envelope contact-icon"></i><span>lspby@foxmail.com</span></div>
-                        <div class="contact-item"><i class="fas fa-phone-alt contact-icon"></i><span>+86 19565771232</span></div>
-                        <div class="contact-item"><i class="fas fa-map-marker-alt contact-icon"></i><span>中国 · 可远程办公</span></div></div>
+                    <div class="contact-info">
+                        <h3>📬 期待与您联系</h3>
+                        <p>如果您对我的项目感兴趣，或者有合适的工作机会，欢迎随时与我取得联系。我会尽快回复！</p>
+                        <div class="contact-details">
+                            <div class="contact-item"><i
+                                    class="fas fa-envelope contact-icon"></i><span>lspby@foxmail.com</span></div>
+                            <div class="contact-item"><i class="fas fa-phone-alt contact-icon"></i><span>+86
+                                    暂不公布……</span></div>
+                            <div class="contact-item"><i class="fas fa-map-marker-alt contact-icon"></i><span>中国 ·
+                                    可远程办公</span></div>
+                        </div>
                     </div>
                     <form class="contact-form" target="_blank" action="https://formsubmit.co/lspby@foxmail.com"
                         method="POST">
@@ -149,7 +227,7 @@
 
     <footer class="footer">
         <div class="footer-container">
-            <p>© 2025 MyPortfolio. 用 ❤️ 和 ☕ 构建.</p>
+            <p>© 2026 MyPortfolio. 用 ❤️ 和 ☕ 构建.</p>
             <p class="footer-sub">All rights reserved. | 求职作品集 · 施工中</p>
             <div class="footer-links">
                 <a href="#home">首页</a>
@@ -162,30 +240,43 @@
     <!-- 音乐播放器 (含预置20个可视化条) -->
     <button class="music-fab" id="musicFab"><i class="fas fa-music"></i><span class="music-fab-pulse"></span></button>
     <div class="music-player" id="musicPlayer">
-        <div class="music-player-header"><h4><i class="fas fa-headphones"></i> 音乐播放器</h4><button class="music-player-close" id="musicPlayerClose"><i class="fas fa-times"></i></button></div>
+        <div class="music-player-header">
+            <h4><i class="fas fa-headphones"></i> 音乐播放器</h4><button class="music-player-close" id="musicPlayerClose"><i
+                    class="fas fa-times"></i></button>
+        </div>
         <div class="music-visualizer">
             <div class="visualizer-bars" id="visualizerBars">
                 <!-- 20个预置柱子，避免JS动态添加 -->
-                <span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span>
-                <span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span>
-                <span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span>
-                <span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span>
+                <span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span><span
+                    class="v-bar"></span><span class="v-bar"></span>
+                <span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span><span
+                    class="v-bar"></span><span class="v-bar"></span>
+                <span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span><span
+                    class="v-bar"></span><span class="v-bar"></span>
+                <span class="v-bar"></span><span class="v-bar"></span><span class="v-bar"></span><span
+                    class="v-bar"></span><span class="v-bar"></span>
             </div>
-            <div class="now-playing-info"><span class="now-playing-title" id="nowPlayingTitle">未选择歌曲</span><span class="now-playing-artist" id="nowPlayingArtist">点击下方列表播放</span></div>
+            <div class="now-playing-info"><span class="now-playing-title" id="nowPlayingTitle">未选择歌曲</span><span
+                    class="now-playing-artist" id="nowPlayingArtist">点击下方列表播放</span></div>
         </div>
         <div class="music-progress-container">
             <span class="music-time" id="currentTime">00:00</span>
-            <div class="music-progress-bar" id="musicProgressBar"><div class="music-progress-fill" id="musicProgressFill"></div><div class="music-progress-thumb" id="musicProgressThumb"></div></div>
+            <div class="music-progress-bar" id="musicProgressBar">
+                <div class="music-progress-fill" id="musicProgressFill"></div>
+                <div class="music-progress-thumb" id="musicProgressThumb"></div>
+            </div>
             <span class="music-time" id="totalTime">00:00</span>
         </div>
         <div class="music-controls">
             <button class="music-ctrl-btn" id="btnShuffle"><i class="fas fa-random"></i></button>
             <button class="music-ctrl-btn" id="btnPrev"><i class="fas fa-backward-step"></i></button>
-            <button class="music-ctrl-btn music-ctrl-play" id="btnPlay"><i class="fas fa-play" id="btnPlayIcon"></i></button>
+            <button class="music-ctrl-btn music-ctrl-play" id="btnPlay"><i class="fas fa-play"
+                    id="btnPlayIcon"></i></button>
             <button class="music-ctrl-btn" id="btnNext"><i class="fas fa-forward-step"></i></button>
             <button class="music-ctrl-btn" id="btnLoop"><i class="fas fa-repeat"></i></button>
         </div>
-        <div class="music-volume"><i class="fas fa-volume-down"></i><input type="range" class="music-volume-slider" id="musicVolumeSlider" min="0" max="100" value="70"><i class="fas fa-volume-up"></i></div>
+        <div class="music-volume"><i class="fas fa-volume-down"></i><input type="range" class="music-volume-slider"
+                id="musicVolumeSlider" min="0" max="100" value="70"><i class="fas fa-volume-up"></i></div>
         <div class="music-playlist" id="musicPlaylist"></div>
     </div>
 
@@ -198,6 +289,9 @@
     <script src="js/counter.js"></script>
     <script src="js/resume-locked.js"></script>
     <script src="js/music-player.js"></script>
+    <script src="js/project-filters.js"></script>
+    <script src="js/blog.js"></script>
     <script src="js/main.js"></script>
 </body>
+
 </html>

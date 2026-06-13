@@ -390,3 +390,72 @@ section {
     opacity: 1;
     pointer-events: auto;
 }
+
+
+
+/* 文章网格布局 */
+.articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+.article-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+    transition: transform 0.3s;
+}
+.article-card:hover { transform: translateY(-5px); }
+.article-cover {
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+}
+.article-info { padding: 1.5rem; }
+.article-meta { color: var(--accent); font-size: 0.85rem; margin: 0.5rem 0; }
+.btn-readmore {
+    background: none;
+    border: none;
+    color: var(--accent);
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 1rem;
+    padding: 0;
+}
+.btn-back-to-list, .btn-back-to-list-detail {
+    display: inline-block;
+    margin-top: 2rem;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 0.6rem 1.2rem;
+    border-radius: 40px;
+    cursor: pointer;
+}
+.article-detail-content {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    padding: 2rem;
+    border-radius: 24px;
+    border: 1px solid var(--card-border);
+    line-height: 1.7;
+}
+.article-detail-content h1, .article-detail-content h2 {
+    margin-top: 1.5em;
+}
+.article-detail-content pre {
+    background: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 12px;
+    overflow-x: auto;
+}
+.article-detail-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 1rem 0;
+    display: block;
+}

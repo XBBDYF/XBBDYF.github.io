@@ -1,0 +1,23 @@
+[
+    {
+      "id": "1",
+      "title": "我的第一篇技术文章",
+      "date": "2026-06-13",
+      "summary": "探讨如何在静态网站中用 Markdown 写博客...",
+      "cover": "img/id-1.jpg"
+    },
+    {
+      "id": "2",
+      "title": "CSS 容器查询实战",
+      "date": "2026-06-13",
+      "summary": "现代布局的新利器，案例解析。",
+      "cover": "img/id-2.jpg"
+    },
+    {
+        "id": "3",
+        "title": "图片插入测试",
+        "date": "2026-06-13",
+        "summary": "插入图片测试",
+        "cover": "/articles/images/demo.gif"
+    }
+  ]
