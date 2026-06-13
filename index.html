@@ -7,18 +7,18 @@
     <title>我的作品集 - 个人博客</title>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <!-- 可选代码高亮 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
     <!-- 拆分后的CSS -->
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/music-player.css">
     <link rel="stylesheet" href="css/animations.css">
     <link rel="stylesheet" href="css/responsive.css">
-    <link rel="icon"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚀%3C/text%3E%3C/svg%3E">
+    <link rel="stylesheet" href="css/code-block-enhancer.css">
+    <link rel="icon" type="image/png" href="tx.png">
 </head>
 
 <body>
@@ -283,6 +283,10 @@
     <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
 
     <!-- 拆分后的JS -->
+
+    <!-- 正确的顺序：先加载依赖库，再加载业务逻辑 -->
+    <script src="js/marked.min.js"></script>
+    <script src="js/highlight.min.js"></script>
     <script src="js/particles.js"></script>
     <script src="js/navigation.js"></script>
     <script src="js/typewriter.js"></script>
@@ -290,6 +294,7 @@
     <script src="js/resume-locked.js"></script>
     <script src="js/music-player.js"></script>
     <script src="js/project-filters.js"></script>
+    <script src="js/code-block-enhancer.js"></script>
     <script src="js/blog.js"></script>
     <script src="js/main.js"></script>
 </body>
