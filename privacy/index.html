@@ -3,170 +3,119 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="light">
 <title>隐私政策 · 炒股人生模拟器</title>
-<meta name="description" content="炒股人生模拟器隐私政策：纯离线单机游戏，不注册账号、不收集、不上传任何个人信息。">
 <style>
   :root{
     --bg:#f5f6f8; --card:#ffffff; --ink:#1b2230; --sub:#5b667a; --line:#e6e9ef;
     --accent:#c9a227;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html{-webkit-text-size-adjust:100%}
   body{
     margin:0; background:var(--bg); color:var(--ink);
     font:15px/1.75 -apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
-    padding:20px 16px 56px;
+    padding:24px 16px 56px;
   }
   .wrap{max-width:760px;margin:0 auto}
-
-  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;font-size:13px}
-  .topbar a{color:var(--sub);text-decoration:none;border-bottom:1px dashed transparent;transition:.18s}
-  .topbar a:hover{color:var(--ink);border-bottom-color:var(--line)}
-  .topbar .raw{opacity:.75}
-
+  header{margin-bottom:18px}
+  h1{font-size:22px;margin:0 0 6px;letter-spacing:.3px}
+  .meta{color:var(--sub);font-size:13px}
   .card{
     background:var(--card);border:1px solid var(--line);border-radius:14px;
-    padding:24px 22px;box-shadow:0 1px 2px rgba(20,30,50,.04);
+    padding:22px 20px;box-shadow:0 1px 2px rgba(20,30,50,.04);
   }
-  .loading,.err{color:var(--sub);font-size:14px;text-align:center;padding:34px 6px}
-  .err a{color:#1a6dd6}
-
-  /* ---------- Markdown 渲染结果 ---------- */
-  .md-body{animation:fade .28s ease both}
-  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-
-  .md-body h1{
-    font-size:22px;line-height:1.35;margin:0 0 10px;letter-spacing:.3px;
-    padding-bottom:12px;border-bottom:1px solid var(--line);
-  }
-  /* md 顶部的「应用名称 / 生效日期 / 版本」信息块 */
-  .md-body > p:first-of-type{
-    color:var(--sub);font-size:12.5px;line-height:1.85;letter-spacing:.2px;margin:0 0 4px;
-  }
-
-  .md-body h2{
-    font-size:16px;line-height:1.45;margin:28px 0 10px;
-    padding-left:10px;border-left:3px solid var(--accent);
-  }
-  .md-body h3{font-size:15px;margin:20px 0 8px;color:#2b3342}
-  .md-body h4{font-size:14.5px;margin:16px 0 6px;color:#2b3342}
-
-  .md-body p{margin:10px 0;color:#2b3342}
-  .md-body strong{color:#161d29;font-weight:600}
-
-  .md-body ul,.md-body ol{margin:10px 0;padding-left:22px}
-  .md-body li{margin:6px 0;color:#2b3342}
-  .md-body li::marker{color:#9aa4b5}
-  .md-body ul{list-style:disc}
-  .md-body ol{list-style:decimal}
-
-  /* 「一句话说明」引用块 */
-  .md-body blockquote{
-    margin:14px 0;padding:12px 14px;border-radius:10px;
-    background:#fffaf0;border:1px solid #f0e2bd;color:#4a4330;
-  }
-  .md-body blockquote p{margin:0;color:#4a4330}
-  .md-body blockquote strong{color:#8a6d1a}
-
-  .md-body table{
-    width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;
-    table-layout:auto;word-break:break-word;
-  }
-  .md-body th,.md-body td{
-    border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;
-  }
-  .md-body th{background:#fafbfc;font-weight:600;white-space:nowrap}
-  .md-body tr:nth-child(even) td{background:#fcfcfd}
-
-  .md-body hr{border:0;border-top:1px solid var(--line);margin:26px 0}
-
-  .md-body a{color:#1a6dd6;word-break:break-all;text-decoration:none;border-bottom:1px solid rgba(26,109,214,.28)}
-  .md-body a:hover{border-bottom-color:#1a6dd6}
-
-  .md-body code{
-    font-family:ui-monospace,SFMono-Regular,Consolas,"Courier New",monospace;
-    font-size:.92em;background:#f2f4f7;border:1px solid var(--line);
-    border-radius:5px;padding:1px 5px;
-  }
-  .md-body pre{
-    background:#f7f8fa;border:1px solid var(--line);border-radius:10px;
-    padding:12px 14px;overflow:auto;margin:12px 0;
-  }
-  .md-body pre code{background:none;border:0;padding:0;font-size:13px}
-  .md-body img{max-width:100%;height:auto;border-radius:10px}
-
-  footer{margin-top:24px;color:var(--sub);font-size:12.5px;text-align:center;line-height:1.8}
-
+  h2{font-size:16px;margin:26px 0 8px;padding-left:10px;border-left:3px solid var(--accent);line-height:1.4}
+  h2:first-of-type{margin-top:6px}
+  p,li{color:#2b3342}
+  ul{padding-left:20px}
+  li{margin:5px 0}
+  .hl{background:#fffaf0;border:1px solid #f0e2bd;border-radius:10px;padding:12px 14px;margin:14px 0}
+  .hl b{color:#8a6d1a}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#fafbfc;font-weight:600}
+  footer{margin-top:26px;color:var(--sub);font-size:12.5px;text-align:center;line-height:1.8}
+  a{color:#1a6dd6;word-break:break-all}
   @media (max-width:420px){
-    body{padding:16px 12px 44px}
-    .card{padding:19px 16px;border-radius:12px}
-    .md-body h1{font-size:20px}
-    .md-body table{font-size:13px}
-    .md-body th,.md-body td{padding:7px 8px}
-    .md-body th{white-space:normal}
-  }
-  @media print{
-    body{background:#fff;padding:0}
-    .topbar,footer{display:none}
-    .card{border:0;box-shadow:none;padding:0}
+    body{padding:18px 12px 44px} .card{padding:18px 15px} h1{font-size:20px}
   }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="topbar">
-    <a href="../index.html">← 返回首页</a>
-    <a class="raw" href="privacy.md">Markdown 源文件</a>
+  <header>
+    <h1>隐私政策</h1>
+    <div class="meta">应用名称：炒股人生模拟器（Stock Life Simulator）　·　生效日期：2026 年 10 月 18 日　·　版本：v1.0</div>
+  </header>
+
+  <div class="card">
+    <div class="hl">
+      <b>一句话说明：</b>本游戏不需要注册账号，存档只保存在你自己的设备上，不会上传；安卓版本内置「TapADN 广告 SDK」用于展示激励视频，该 SDK 会在播放广告时读取必要的设备标识（见第四节）。桌面版不含任何广告。
+    </div>
+
+    <h2>一、我们收集哪些信息</h2>
+    <p>游戏本体<b>不收集</b>任何个人信息，包括但不限于：姓名、手机号、身份证号、邮箱、地理位置、通讯录、相册、麦克风、摄像头数据。</p>
+    <p>例外只有一个：安卓版本的激励视频广告由第三方广告平台提供，其 SDK 会在播放广告时读取设备信息用于广告投放与反作弊，具体范围、目的与关闭方式见第四节。桌面版与网页版不含任何广告 SDK。</p>
+
+    <h2>二、应用申请的权限及用途</h2>
+    <table>
+      <tr><th style="width:38%">权限</th><th>用途说明</th></tr>
+      <tr><td>网络访问（INTERNET）</td><td>加载本地页面资源；安卓版本另用于向广告服务器请求广告。游戏存档不会上传。</td></tr>
+      <tr><td>查看网络状态（ACCESS_NETWORK_STATE）</td><td>广告 SDK 用于判断网络是否可用，避免断网时反复请求广告。</td></tr>
+      <tr><td>安装应用（REQUEST_INSTALL_PACKAGES）</td><td>仅用于广告落地页中「下载安装」类广告的跳转，不会安装任何非你主动点击的应用。</td></tr>
+    </table>
+    <p>本应用<b>不申请</b>位置、通讯录、短信、相机、麦克风、相册、外部存储、电话状态、已安装应用列表等敏感权限（广告 SDK 自带的「读取应用列表」权限已在打包时显式移除，SDK 内的该采集开关也已关闭）。</p>
+
+    <h2>三、游戏数据如何保存</h2>
+    <ul>
+      <li>游戏存档、成就记录、音效设置保存在你的设备本地（浏览器本地存储或应用私有数据目录）。</li>
+      <li>这些数据不会上传到任何服务器，也不会与任何第三方共享。</li>
+      <li>卸载应用或在系统设置中清除应用数据，即会永久删除上述本地数据，我们无法恢复。</li>
+      <li>单个存档文件大小约 1–2 MB，不包含任何个人身份信息。</li>
+    </ul>
+
+    <h2>四、第三方服务（广告）</h2>
+    <p><b>桌面版 / 网页版：</b>不接入任何第三方 SDK，不含广告、统计、推送、支付服务。</p>
+    <p><b>安卓版：</b>接入「TapADN 广告 SDK」，由上海艾得蒽数字科技有限公司（TapTap 旗下广告平台）提供，仅用于展示激励视频广告。该 SDK 会处理以下信息：</p>
+    <ul>
+      <li>设备型号、系统版本、屏幕尺寸、语言与时区；</li>
+      <li>网络类型与网络状态；</li>
+      <li>应用包名与版本号；</li>
+      <li>广告标识符（OAID / Android ID），用于广告归因、频次控制与反作弊。</li>
+    </ul>
+    <p>该 SDK <b>不会</b>采集你的位置、通讯录、短信、相册、IMEI、已安装应用列表，也不会读取游戏存档内容。</p>
+    <p>SDK 隐私政策：<a href="https://ssp.dirichlet.cn/docs/agreement/" target="_blank" rel="noopener">ssp.dirichlet.cn/docs/agreement</a>；合规说明：<a href="https://ssp.dirichlet.cn/docs/compliance/" target="_blank" rel="noopener">ssp.dirichlet.cn/docs/compliance</a>。</p>
+    <p><b>个性化广告开关：</b>首次启动时会询问是否允许个性化推荐。选择关闭后广告数量不变，但相关度会降低。你也可以通过下方联系方式要求关闭。</p>
+    <p>游戏内的公司、股票、行情、新闻均为随机生成的虚构内容，不对接任何真实交易所或金融数据接口。</p>
+
+    <h2>五、未成年人保护</h2>
+    <p>本应用不主动收集用户信息，不存在专门针对未成年人收集个人信息的情形。若未成年人使用本应用，建议在监护人指导下进行；监护人可在首次启动的广告说明中选择关闭个性化广告。</p>
+
+    <h2>六、你的权利</h2>
+    <ul>
+      <li>你可以在游戏内「重新开始」清除当前存档。</li>
+      <li>你可以在系统设置中清除应用数据或卸载应用，删除全部本地数据。</li>
+      <li>你可以拒绝或撤回「个性化广告」授权：首次启动时可直接选择关闭；也可在系统设置中清除应用数据后重新选择。</li>
+      <li>除广告 SDK 为投放广告所必需的信息外，我们本身不收集你的个人信息。</li>
+    </ul>
+
+    <h2>七、数据安全</h2>
+    <p>由于所有数据仅保存在本地设备，数据安全取决于你的设备与系统安全设置。建议不要将设备交给不可信的人使用，并及时更新系统安全补丁。</p>
+
+    <h2>八、免责声明</h2>
+    <p>本游戏为模拟经营类娱乐产品，所有行情、公司、新闻、收益均为虚构随机生成，不构成任何投资建议，也不代表任何真实市场情况。</p>
+
+    <h2>九、政策更新</h2>
+    <p>若本政策发生变更，我们会在本页面更新内容并修改上方的生效日期。重大变更时会在应用更新说明中提示。</p>
+
+    <h2>十、联系我们</h2>
+    <p>如对本隐私政策有任何疑问，可通过以下方式联系：</p>
+    <p>电子邮箱：<b><a href="mailto:3415574663@qq.com">3415574663@qq.com</a></b></p>
+
+    <footer>
+      本页面为「炒股人生模拟器」的隐私政策说明页。<br>
+      最近更新：2026 年 10 月 18 日
+    </footer>
   </div>
-
-  <main class="card" id="policy">
-    <div class="loading">正在加载隐私政策…</div>
-  </main>
-
-  <footer>
-    本页面为「炒股人生模拟器」的隐私政策说明页。
-  </footer>
 </div>
-
-<script src="../js/marked.min.js"></script>
-<script>
-(function () {
-  var box = document.getElementById('policy');
-
-  function fail(msg) {
-    box.innerHTML = '<div class="err">隐私政策加载失败：' + msg +
-      '<br><br><a href="privacy.md">点击查看 Markdown 原文</a></div>';
-  }
-
-  async function render() {
-    try {
-      var res = await fetch('privacy.md', { cache: 'no-cache' });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      var md = (await res.text()).replace(/^\uFEFF/, '');
-
-      if (typeof marked === 'undefined' || !marked.parse) throw new Error('marked 未加载');
-
-      var html = marked.parse(md, { gfm: true, breaks: true });
-      box.innerHTML = '<div class="md-body">' + html + '</div>';
-
-      // 顶部信息块里的邮箱等自动链接无需额外处理；若标题缺失则补一个
-      if (!box.querySelector('h1')) {
-        var h = document.createElement('h1');
-        h.textContent = '隐私政策';
-        box.firstChild.insertBefore(h, box.firstChild.firstChild);
-      }
-    } catch (e) {
-      console.error('隐私政策渲染失败:', e);
-      fail(e.message || '未知错误');
-    }
-  }
-
-  render();
-})();
-</script>
-<noscript>
-  <div class="wrap"><p style="color:#5b667a">你的浏览器未启用 JavaScript，请查看 <a href="privacy.md">隐私政策原文（Markdown）</a>。</p></div>
-</noscript>
 </body>
 </html>
