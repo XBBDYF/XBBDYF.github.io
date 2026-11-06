@@ -34,5 +34,13 @@
     "date": "2026-08-13",
     "summary": "对B站审核的吐槽...",
     "cover": "/articles/images/5封面.webp"
+  },
+  {
+    "id": "6",
+    "title": "PSP 网易云第一个版本，总算做出来了",
+    "date": "2026-11-06",
+    "summary": "花了至少六七百块，写了二三十个解码测试程序。赶在周五做出第一个版本，也该给自己留点时间了。",
+    "category": "折腾记录",
+    "cover": "assets/images/psp-melody.png"
   }
 ]

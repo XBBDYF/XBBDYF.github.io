@@ -68,7 +68,12 @@ def main() -> None:
         rows.append({"source": "tx.png", "original_bytes": (ROOT / "tx.png").stat().st_size,
                      "avatar_bytes": len(content)})
 
-    images = {}
+    # Shared project artwork may also be used by articles. Preserve its metadata.
+    existing = json.loads(MANIFEST.read_text(encoding="utf-8")) if MANIFEST.exists() else {}
+    images = {
+        key: value for key, value in existing.get("images", {}).items()
+        if not key.startswith("articles/images/") and (ROOT / key).is_file()
+    }
     for source in sources:
         key = source.relative_to(ROOT).as_posix()
         # Content changes produce new article asset URLs, avoiding stale browser caches.

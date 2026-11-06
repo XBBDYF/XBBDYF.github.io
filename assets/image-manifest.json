@@ -5,6 +5,16 @@
     "height": 192
   },
   "images": {
+    "assets/images/psp-melody.png": {
+      "thumbnail": "assets/images/psp-melody.png",
+      "width": 480,
+      "height": 272
+    },
+    "assets/images/psp-qq-group.png": {
+      "thumbnail": "assets/images/psp-qq-group.png",
+      "width": 229,
+      "height": 297
+    },
     "articles/images/5封面.webp": {
       "thumbnail": "articles/images/5封面.webp",
       "width": 470,
