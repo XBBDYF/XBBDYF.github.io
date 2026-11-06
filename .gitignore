@@ -1,0 +1,6 @@
+# Local previews and browser verification artifacts
+.playwright-cli/
+output/
+__pycache__/
+*.pyc
+node_modules/

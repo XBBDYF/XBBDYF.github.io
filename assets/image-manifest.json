@@ -1,0 +1,53 @@
+{
+  "avatar": {
+    "src": "assets/images/avatar.webp",
+    "width": 192,
+    "height": 192
+  },
+  "images": {
+    "articles/images/5封面.webp": {
+      "thumbnail": "articles/images/5封面.webp",
+      "width": 470,
+      "height": 261
+    },
+    "articles/images/5插图1.webp": {
+      "thumbnail": "articles/images/5插图1.webp",
+      "width": 474,
+      "height": 282
+    },
+    "articles/images/5插图2.jpeg": {
+      "thumbnail": "assets/images/article-bf9ee3c616e1753ad1c2-thumb.webp",
+      "width": 1400,
+      "height": 884,
+      "optimized": "assets/images/article-bf9ee3c616e1753ad1c2-body.webp"
+    },
+    "articles/images/5插图3.gif": {
+      "thumbnail": "assets/images/article-297563cad1c3f9a50b05-thumb.webp",
+      "width": 540,
+      "height": 595
+    },
+    "articles/images/6db3fce839b2cca0ee325019687b61821b402e18.jpg": {
+      "thumbnail": "assets/images/article-a99ade97043f60c3ed01-thumb.webp",
+      "width": 1920,
+      "height": 1080,
+      "optimized": "assets/images/article-a99ade97043f60c3ed01-body.webp"
+    },
+    "articles/images/afcacbfcd3f71b972dcde3f3baf9810d_720.jpeg": {
+      "thumbnail": "assets/images/article-ba30e4b37e1190473f5a-thumb.webp",
+      "width": 1280,
+      "height": 1891,
+      "optimized": "assets/images/article-ba30e4b37e1190473f5a-body.webp"
+    },
+    "articles/images/ced17f22a6a945354461dc16de44773adecbfc37.jpg": {
+      "thumbnail": "assets/images/article-4c667ca2f6f482ffc761-thumb.webp",
+      "width": 1920,
+      "height": 1080,
+      "optimized": "assets/images/article-4c667ca2f6f482ffc761-body.webp"
+    },
+    "articles/images/demo.gif": {
+      "thumbnail": "assets/images/article-7f8ca0e0788a8c9ae65d-thumb.webp",
+      "width": 480,
+      "height": 270
+    }
+  }
+}
